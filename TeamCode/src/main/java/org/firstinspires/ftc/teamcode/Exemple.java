@@ -15,6 +15,7 @@ public class Exemple extends LinearOpMode {
     private Servo pince;
 
     private DcMotor intake;
+
     @Override
     public void runOpMode() {
         shooter1 = hardwareMap.get(DcMotor.class, "shooter1");
