@@ -23,24 +23,26 @@ public class Exemple extends LinearOpMode {
     public void runOpMode() {
         shooter1 = hardwareMap.get(DcMotor.class, "shooter1");
         shooter2 = hardwareMap.get(DcMotor.class, "shooter2");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        pince = hardwareMap.get(Servo.class, "pince");
+        // intake = hardwareMap.get(DcMotor.class, "intake");
+        // pince = hardwareMap.get(Servo.class, "pince");
         waitForStart();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if(gamepad1.y) {
+
+            if (gamepad1.left_trigger > 0.3) {
                 shooter1.setPower(1);
-            }
-            if(gamepad1.a){
+                shooter2.setPower(-1);
+            } else if (gamepad1.right_trigger > 0.3) {
                 shooter1.setPower(-1);
-            }
-            else {
+                shooter2.setPower(1);
+            } else {
                 shooter1.setPower(0);
+                shooter2.setPower(0);
             }
-            shooter2.setPower(gamepad1.right_stick_y);
-            intake.setPower(gamepad1.right_trigger);
-            intake.setPower(-gamepad1.left_trigger);
-            pince.setPosition(gamepad1.left_stick_x);
+
+            // intake.setPower(gamepad1.right_trigger);
+            // intake.setPower(-gamepad1.left_trigger);
+            // pince.setPosition(gamepad1.left_stick_x);
         }
     }
         }
