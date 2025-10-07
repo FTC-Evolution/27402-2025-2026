@@ -11,6 +11,8 @@ public class Prototyp extends LinearOpMode {
     private DcMotor shooter1;
     private DcMotor shooter2;
 
+    private Integer divider = 1;
+
     @Override
     public void runOpMode() {
 
@@ -22,8 +24,24 @@ public class Prototyp extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
              while (opModeIsActive()) {
 
-                shooter1.setPower(gamepad1.right_stick_y / 2);
-                shooter2.setPower(-gamepad1.right_stick_y / 2);
+                //shooter1.setPower(gamepad1.right_stick_y / 2);
+                //shooter2.setPower(-gamepad1.right_stick_y / 2);
+
+                 shooter1.setPower(gamepad1.right_stick_y / divider);
+                 shooter2.setPower(-gamepad1.right_stick_y / divider);
+
+                 if (gamepad1.x) {
+                     divider = 1;
+                 }
+                 if (gamepad1.y) {
+                     divider = 2;
+                 }
+                 if (gamepad1.b) {
+                     divider = 3;
+                 }
+                 if (gamepad1.a) {
+                    divider = 4;
+                 }
 
            }
     }
