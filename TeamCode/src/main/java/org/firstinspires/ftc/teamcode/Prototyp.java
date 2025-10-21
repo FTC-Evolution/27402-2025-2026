@@ -1,48 +1,125 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="exemple")
+
+
+
+import org.firstinspires.ftc.robotcontroller.external.samples.RobotTeleopMecanumFieldRelativeDrive;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
+@TeleOp(name="Prototype des Sec 2 27402")
 
 public class Prototyp extends LinearOpMode {
     private DcMotor shooter1;
     private DcMotor shooter2;
 
+    private Servo shooteraim;
+
     private Integer divider = 1;
 
-    @Override
+    private RobotTeleopMecanumFieldRelativeDrive drive;
+    // This declares the four motors needed
+    DcMotor frontLeftDrive;
+    DcMotor frontRightDrive;
+    DcMotor backLeftDrive;
+    DcMotor backRightDrive;
+
+    // This declares the IMU needed to get the current direction the robot is facing
+    IMU imu;
+
+    public void shooterInit() {
+        shooter1 = hardwareMap.get(DcMotor.class, "leftshooter");
+        shooter2 = hardwareMap.get(DcMotor.class, "rightshooter");
+    }
+
+    public void aimInit() {
+        shooteraim = hardwareMap.get(Servo.class, "servo0");
+    }
+
+    public void aimLoop() {
+        shooteraim.setPosition(gamepad2.left_stick_y);
+    }
+    public void shooterLoop() {
+
+            shooter1.setPower(gamepad2.right_stick_y / divider);
+            shooter2.setPower(-gamepad2.right_stick_y / divider);
+
+            if (gamepad2.x) {
+                divider = 1;
+            }
+            if (gamepad2.y) {
+                divider = 2;
+            }
+            if (gamepad2.b) {
+                divider = 3;
+            }
+            if (gamepad2.a) {
+                divider = 4;
+            }
+    }
+
+
+
     public void runOpMode() {
 
-        shooter1 = hardwareMap.get(DcMotor.class, "shooter1");
-        shooter2 = hardwareMap.get(DcMotor.class, "shooter2");
-
+        InitDrive();
+        shooterInit();
+        aimInit();
 
         waitForStart();
-        // run until the end of the match (driver presses STOP)
-             while (opModeIsActive()) {
 
-                //shooter1.setPower(gamepad1.right_stick_y / 2);
-                //shooter2.setPower(-gamepad1.right_stick_y / 2);
+        if (isStopRequested()) return;
 
-                 shooter1.setPower(gamepad1.right_stick_y / divider);
-                 shooter2.setPower(-gamepad1.right_stick_y / divider);
-
-                 if (gamepad1.x) {
-                     divider = 1;
-                 }
-                 if (gamepad1.y) {
-                     divider = 2;
-                 }
-                 if (gamepad1.b) {
-                     divider = 3;
-                 }
-                 if (gamepad1.a) {
-                    divider = 4;
-                 }
-
-           }
-    }
+        while(opModeIsActive()){
+            boucleDrive();
+            aimLoop();
+            shooterLoop();
         }
+
+    }
+
+    public void InitDrive() {
+        // Declare our motors
+        // Make sure your ID's match your configuration
+        frontLeftDrive = hardwareMap.dcMotor.get("motor0");
+        backLeftDrive = hardwareMap.dcMotor.get("motor2");
+        frontRightDrive = hardwareMap.dcMotor.get("motor1");
+        backRightDrive = hardwareMap.dcMotor.get("motor3");
+
+        // Reverse the right side motors. This may be wrong for your setup.
+        // If your robot moves backwards when commanded to go forwards,
+        // reverse the left side instead.
+        // See the note about this earlier on this page.
+        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+
+    public void boucleDrive() {
+        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+        double rx = gamepad1.right_stick_x;
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        frontLeftDrive.setPower(frontLeftPower);
+        backLeftDrive.setPower(backLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        backRightDrive.setPower(backRightPower);
+    }
+
+}
