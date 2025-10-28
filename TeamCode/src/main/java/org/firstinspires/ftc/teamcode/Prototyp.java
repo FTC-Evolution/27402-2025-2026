@@ -24,6 +24,11 @@ public class Prototyp extends LinearOpMode {
 
     private Integer divider = 1;
 
+    double counter1 = 0;
+    double counter2 = 0;
+
+    String winner = "none";
+
     private RobotTeleopMecanumFieldRelativeDrive drive;
     // This declares the four motors needed
     DcMotor frontLeftDrive;
@@ -33,6 +38,8 @@ public class Prototyp extends LinearOpMode {
 
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
+
+    boolean end = false;
 
     public void shooterInit() {
         shooter1 = hardwareMap.get(DcMotor.class, "leftshooter");
@@ -67,23 +74,7 @@ public class Prototyp extends LinearOpMode {
 
 
 
-    public void runOpMode() {
 
-        InitDrive();
-        shooterInit();
-        aimInit();
-
-        waitForStart();
-
-        if (isStopRequested()) return;
-
-        while(opModeIsActive()){
-            boucleDrive();
-            aimLoop();
-            shooterLoop();
-        }
-
-    }
 
     public void InitDrive() {
         // Declare our motors
@@ -120,6 +111,65 @@ public class Prototyp extends LinearOpMode {
         backLeftDrive.setPower(backLeftPower);
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
+    }
+public void buttoninnit() {
+
+
+}
+
+public void buttonLoop() {
+
+
+        // telemetry.addLine("get 50 to win");
+
+    if (end)
+    {
+        return;
+    }
+        if (gamepad1.xWasPressed()) {
+            counter1 +=1;
+        }
+
+        if (gamepad2.xWasPressed()) {
+            counter2 +=1;
+        }
+
+
+        else if (counter1 >= 50) {
+            winner = "player 1";
+            end = true;
+
+        }
+        else if (counter2 >= 50) {
+            winner = "player 2";
+            end = true;
+        }
+
+        telemetry.addData("player 1 score", counter1);
+        telemetry.addData("player 2 score", counter2);
+        telemetry.addData("winner", winner);
+        telemetry.addData("game over", end);
+
+        telemetry.update();
+}
+
+    public void runOpMode() {
+
+        // InitDrive();
+        // shooterInit();
+        // aimInit();
+        buttoninnit();
+        waitForStart();
+
+        if (isStopRequested()) return;
+
+        while(opModeIsActive()){
+            buttonLoop();
+            //     boucleDrive();
+            //   aimLoop();
+            // shooterLoop();
+        }
+
     }
 
 }
