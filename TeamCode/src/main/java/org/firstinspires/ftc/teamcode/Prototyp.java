@@ -29,6 +29,8 @@ public class Prototyp extends LinearOpMode {
 
     double counter1 = 0;
     double counter2 = 0;
+
+    double viseurangle = 90;
     boolean end = false;
     String winner = "none";
 
@@ -87,7 +89,7 @@ public class Prototyp extends LinearOpMode {
     }
 
     public void aimLoop() {
-        shooteraim.setPosition(gamepad2.left_stick_y);
+        shooteraim.setPosition(gamepad2.right_trigger);
     }
 
     public void gooberInit(){
@@ -96,6 +98,8 @@ public class Prototyp extends LinearOpMode {
     }
 
     public void gooberLoop(){
+
+        // Change to Gamepad 1, Gamepad 2 is for testing purposes
         if (gamepad2.rightBumperWasPressed()) {
             goober.setPower(-1);
         } else if (gamepad2.leftBumperWasPressed()) {
@@ -107,11 +111,15 @@ public class Prototyp extends LinearOpMode {
     }
     public void shooterLoop() {
 
-        shooter1.setPower(gamepad2.right_stick_y / divider);
-        shooter2.setPower(-gamepad2.right_stick_y / divider);
+        shooter1.setPower(gamepad2.right_trigger / divider);
+        shooter2.setPower(-gamepad2.right_trigger / divider);
+
+        shooter1.setPower(-gamepad2.left_trigger / divider);
+        shooter2.setPower(gamepad2.left_trigger / divider);
 
         if (gamepad2.x) {
             divider = 1;
+
         }
         if (gamepad2.y) {
             divider = 2;
@@ -225,8 +233,15 @@ public class Prototyp extends LinearOpMode {
         telemetry.addData("angular velocity y", imu.getRobotAngularVelocity(angle).yRotationRate);
         telemetry.addData("angular velocity z", imu.getRobotAngularVelocity(angle).zRotationRate);
 
+        telemetry.addData("left Shooter power", shooter1.getPower());
+        telemetry.addData("right Shooter power", shooter2.getPower());
+
 
         telemetry.update();
     }
+
+
+
+
 
 }
