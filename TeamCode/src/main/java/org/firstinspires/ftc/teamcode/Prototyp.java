@@ -8,19 +8,42 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcontroller.external.samples.RobotTeleopMecanumFieldRelativeDrive;
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @TeleOp(name="Prototype des Sec 2 27402")
 
 public class Prototyp extends LinearOpMode {
+    boolean showImuTelemetry = false;
+    boolean showShooterTelemetry = false;
+    boolean showColorTelemetry = false;
+    boolean showAimingTelemetry = false;
+    boolean showGooberTelemetry = false;
+    boolean showCameraTelemetry = false;
+
+
     private DcMotor shooter1;
     private DcMotor shooter2;
     private DcMotor goober;
+    private NormalizedColorSensor sensor;
     private Servo shooteraim;
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -30,9 +53,16 @@ public class Prototyp extends LinearOpMode {
     double counter1 = 0;
     double counter2 = 0;
 
+    private String obelisk;
+
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
+
     double viseurangle = 90;
     boolean end = false;
     String winner = "none";
+
+    Map<Integer, String> obeliskPositions;
 
     // This declares the four motors needed
     DcMotor frontLeftDrive;
@@ -61,7 +91,9 @@ public class Prototyp extends LinearOpMode {
         // shooterInit();
         // aimInit();
         // buttoninnit();
-        gooberInit();
+        // gooberInit();
+        // initAprilTag();
+        colorSensorInit();
         telemetryInit();
         waitForStart();
         runtime.reset();
@@ -70,29 +102,74 @@ public class Prototyp extends LinearOpMode {
 
         while(opModeIsActive()){
             // buttonLoop();
-            //     boucleDrive();
-            //   aimLoop();
+            // boucleDrive();
+            // aimLoop();
             // shooterLoop();
-            gooberLoop();
+            // gooberLoop();
+            // aprilTagLoop();
+            colorSensorLoop();
             telemetryLoop();
         }
 
     }
 
+    public void initAprilTag() {
+
+        showCameraTelemetry = true;
+
+        obeliskPositions = new HashMap<Integer, String>();
+        obeliskPositions.put(21,"GPP");
+        obeliskPositions.put(22,"PGP");
+        obeliskPositions.put(23,"PPG");
+
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        // if (USE_WEBCAM) {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
+
+            //visionPortal = VisionPortal.easyCreateWithDefaults(
+            //        BuiltinCameraDirection.BACK, aprilTag);
+        // }
+
+    }
+
+    public void aprilTagLoop(){
+
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if (detection.metadata != null) {
+                obelisk = obeliskPositions.get(detection.id);
+            }
+
+        }
+    }
+
     public void shooterInit() {
+        showShooterTelemetry = true;
         shooter1 = hardwareMap.get(DcMotor.class, "leftshooter");
         shooter2 = hardwareMap.get(DcMotor.class, "rightshooter");
     }
 
     public void aimInit() {
+        showAimingTelemetry = true;
         shooteraim = hardwareMap.get(Servo.class, "servo0");
+        shooteraim.setPosition(viseurangle/180);
     }
 
     public void aimLoop() {
-        shooteraim.setPosition(gamepad2.right_trigger);
+        if (gamepad2.dpadUpWasPressed()){
+                viseurangle += 5;
+        } else if (gamepad2.dpadDownWasPressed()) {
+                viseurangle -= 5;
+        }
+
+        shooteraim.setPosition(viseurangle/180);
     }
 
     public void gooberInit(){
+        showGooberTelemetry = true;
         goober = hardwareMap.get(DcMotor.class, "goober");
 
     }
@@ -100,9 +177,9 @@ public class Prototyp extends LinearOpMode {
     public void gooberLoop(){
 
         // Change to Gamepad 1, Gamepad 2 is for testing purposes
-        if (gamepad2.rightBumperWasPressed()) {
+        if (gamepad1.right_trigger >= 0.5) {
             goober.setPower(-1);
-        } else if (gamepad2.leftBumperWasPressed()) {
+        } else if (gamepad1.left_trigger >= 0.5) {
             goober.setPower(1);
         } else {
             goober.setPower(0);
@@ -137,6 +214,7 @@ public class Prototyp extends LinearOpMode {
 
 
     public void InitDrive() {
+        showImuTelemetry = true;
         // Declare our motors
         // Make sure your ID's match your configuration
         frontLeftDrive = hardwareMap.dcMotor.get("motor0");
@@ -212,6 +290,14 @@ public class Prototyp extends LinearOpMode {
 
         telemetry.update();
     }
+
+    public void colorSensorInit() {
+        showColorTelemetry = true;
+        sensor = hardwareMap.get(NormalizedColorSensor.class,"sensor");
+    }
+    public void colorSensorLoop(){
+
+    }
     public void telemetryInit(){
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -225,20 +311,72 @@ public class Prototyp extends LinearOpMode {
 
         telemetry.addData("status", "runtime: " + runtime.toString());
 
-        telemetry.addData("yaw", imu.getRobotYawPitchRollAngles().getYaw(angle));
-        telemetry.addData("pitch", imu.getRobotYawPitchRollAngles().getPitch(angle));
-        telemetry.addData("roll", imu.getRobotYawPitchRollAngles().getRoll(angle));
+        if (showImuTelemetry) {
+            telemetry.addData("yaw", imu.getRobotYawPitchRollAngles().getYaw(angle));
+            telemetry.addData("pitch", imu.getRobotYawPitchRollAngles().getPitch(angle));
+            telemetry.addData("roll", imu.getRobotYawPitchRollAngles().getRoll(angle));
 
-        telemetry.addData("angular velocity x", imu.getRobotAngularVelocity(angle).xRotationRate);
-        telemetry.addData("angular velocity y", imu.getRobotAngularVelocity(angle).yRotationRate);
-        telemetry.addData("angular velocity z", imu.getRobotAngularVelocity(angle).zRotationRate);
+            telemetry.addData("angular velocity x", imu.getRobotAngularVelocity(angle).xRotationRate);
+            telemetry.addData("angular velocity y", imu.getRobotAngularVelocity(angle).yRotationRate);
+            telemetry.addData("angular velocity z", imu.getRobotAngularVelocity(angle).zRotationRate);
+        }
 
-        telemetry.addData("left Shooter power", shooter1.getPower());
-        telemetry.addData("right Shooter power", shooter2.getPower());
+        if (showCameraTelemetry) {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            telemetry.addData("number of apriltags", currentDetections.size());
 
+            // Step through the list of detections and display info for each one.
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) {
+                    telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                } else {
+                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                }
+            }   // end for() loop
+
+            // Add "key" information to telemetry
+            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+            telemetry.addLine("RBE = Range, Bearing & Elevation");
+
+            telemetry.addData("Pattern", obelisk);
+        }
+
+        if (showShooterTelemetry) {
+            telemetry.addData("left Shooter power", shooter1.getPower());
+            telemetry.addData("right Shooter power", shooter2.getPower());
+        }
+
+        if (showColorTelemetry) {
+            NormalizedRGBA colors = sensor.getNormalizedColors();
+
+            telemetry.addData("Hue", JavaUtil.colorToHue(colors.toColor()));
+            telemetry.addData("Saturation", "%.3f", JavaUtil.colorToSaturation(colors.toColor()));
+            telemetry.addData("Value", "%.3f", JavaUtil.colorToValue(colors.toColor()));
+            telemetry.addData("Color", JavaUtil.colorToText(colors.toColor()));
+
+            telemetry.addData("Alpha", "%.3f", colors.alpha);
+
+            telemetry.addData("Light level", "%.3f", ((OpticalDistanceSensor) sensor).getLightDetected());
+        }
+
+        if (showAimingTelemetry) {
+            telemetry.addData("Servo Position", shooteraim.getPosition());
+            telemetry.addData("viseurangle", viseurangle);
+        }
+
+        if (showGooberTelemetry) {
+            telemetry.addData("Goober power", goober.getPower());
+        }
 
         telemetry.update();
-    }
+    };
+
+
 
 
 
