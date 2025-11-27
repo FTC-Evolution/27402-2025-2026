@@ -5,20 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotTeleopMecanumFieldRelativeDrive;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -29,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@TeleOp(name="Prototype des Sec 2 27402")
+@TeleOp(name="Teleop des Sec 2 27402")
 
-public class Prototyp extends LinearOpMode {
+public class DefaultTeleop extends LinearOpMode {
     boolean showImuTelemetry = false;
     boolean showShooterTelemetry = false;
     boolean showColorTelemetry = false;
@@ -54,6 +49,10 @@ public class Prototyp extends LinearOpMode {
     double counter2 = 0;
 
     private String obelisk;
+    private String fieldSide;
+
+    Map<Integer, String> obeliskPositions;
+    Map<Integer, String> fieldSidePositions;
 
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -62,7 +61,7 @@ public class Prototyp extends LinearOpMode {
     boolean end = false;
     String winner = "none";
 
-    Map<Integer, String> obeliskPositions;
+
 
     // This declares the four motors needed
     DcMotor frontLeftDrive;
@@ -92,7 +91,7 @@ public class Prototyp extends LinearOpMode {
         // aimInit();
         // buttoninnit();
         // gooberInit();
-        // initAprilTag();
+        initAprilTag();
         colorSensorInit();
         telemetryInit();
         waitForStart();
@@ -106,7 +105,7 @@ public class Prototyp extends LinearOpMode {
             // aimLoop();
             // shooterLoop();
             // gooberLoop();
-            // aprilTagLoop();
+            aprilTagLoop();
             colorSensorLoop();
             telemetryLoop();
         }
@@ -122,25 +121,34 @@ public class Prototyp extends LinearOpMode {
         obeliskPositions.put(22,"PGP");
         obeliskPositions.put(23,"PPG");
 
+
+        fieldSidePositions = new HashMap<Integer, String>();
+        fieldSidePositions.put(20,"blue");
+        fieldSidePositions.put(24,"red");
+
         // Create the AprilTag processor the easy way.
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
         // Create the vision portal the easy way.
         // if (USE_WEBCAM) {
-            visionPortal = VisionPortal.easyCreateWithDefaults(
-                    hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
 
-            //visionPortal = VisionPortal.easyCreateWithDefaults(
-            //        BuiltinCameraDirection.BACK, aprilTag);
+        //visionPortal = VisionPortal.easyCreateWithDefaults(
+        //        BuiltinCameraDirection.BACK, aprilTag);
         // }
 
     }
 
     public void aprilTagLoop(){
-
         for (AprilTagDetection detection : aprilTag.getDetections()) {
             if (detection.metadata != null) {
-                obelisk = obeliskPositions.get(detection.id);
+                if (detection.metadata.name.contains("Obelisk")) {
+                    obelisk = obeliskPositions.get(detection.id);
+                } else {
+                    fieldSide = fieldSidePositions.get(detection.id);
+                }
+
             }
 
         }
@@ -160,9 +168,9 @@ public class Prototyp extends LinearOpMode {
 
     public void aimLoop() {
         if (gamepad2.dpadUpWasPressed()){
-                viseurangle += 5;
+            viseurangle += 5;
         } else if (gamepad2.dpadDownWasPressed()) {
-                viseurangle -= 5;
+            viseurangle -= 5;
         }
 
         shooteraim.setPosition(viseurangle/180);
@@ -339,11 +347,12 @@ public class Prototyp extends LinearOpMode {
             }   // end for() loop
 
             // Add "key" information to telemetry
-            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            telemetry.addLine("key:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
             telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
             telemetry.addLine("RBE = Range, Bearing & Elevation");
 
-            telemetry.addData("Pattern", obelisk);
+            telemetry.addData("Last seen Pattern", obelisk);
+            telemetry.addData("Last seen Target", fieldSide);
         }
 
         if (showShooterTelemetry) {
@@ -353,15 +362,28 @@ public class Prototyp extends LinearOpMode {
 
         if (showColorTelemetry) {
             NormalizedRGBA colors = sensor.getNormalizedColors();
+            int colorCode = colors.toColor();
+            String ballColor = "";
 
-            telemetry.addData("Hue", JavaUtil.colorToHue(colors.toColor()));
-            telemetry.addData("Saturation", "%.3f", JavaUtil.colorToSaturation(colors.toColor()));
-            telemetry.addData("Value", "%.3f", JavaUtil.colorToValue(colors.toColor()));
-            telemetry.addData("Color", JavaUtil.colorToText(colors.toColor()));
+            telemetry.addData("Hue", JavaUtil.colorToHue(colorCode));
+            telemetry.addData("Saturation", "%.3f", JavaUtil.colorToSaturation(colorCode));
+            telemetry.addData("Value", "%.3f", JavaUtil.colorToValue(colorCode));
+            telemetry.addData("Color", JavaUtil.colorToText(colorCode));
 
             telemetry.addData("Alpha", "%.3f", colors.alpha);
 
             telemetry.addData("Light level", "%.3f", ((OpticalDistanceSensor) sensor).getLightDetected());
+
+            if ((JavaUtil.colorToHue(colorCode) >= 200) && (JavaUtil.colorToHue(colorCode) <= 300)) {
+                ballColor = "purple";
+            }
+            else if ((JavaUtil.colorToHue(colorCode) >= 30) && (JavaUtil.colorToHue(colorCode) <= 199)) {
+                ballColor = "green";
+            } else {
+                ballColor = "unknown";
+            }
+
+            telemetry.addData("Ball color", ballColor);
         }
 
         if (showAimingTelemetry) {
@@ -371,15 +393,9 @@ public class Prototyp extends LinearOpMode {
 
         if (showGooberTelemetry) {
             telemetry.addData("Goober power", goober.getPower());
+
         }
 
         telemetry.update();
     };
-
-
-
-
-
-
-
 }
