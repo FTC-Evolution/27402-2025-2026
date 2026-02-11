@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -26,9 +27,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Autonomous(name="Mode Autonome Sec 2 27402")
-public class DefaultAutonomous {
+public class DefaultAutonomous extends LinearOpMode {
     boolean showImuTelemetry = false;
     boolean showShooterTelemetry = false;
     boolean showColorTelemetry = false;
@@ -52,6 +54,8 @@ public class DefaultAutonomous {
 
     private String obelisk;
     private String fieldSide;
+    private double fieldSideDistance;
+    private double fieldSideYaw;
 
     Map<Integer, String> obeliskPositions;
     Map<Integer, String> fieldSidePositions;
@@ -82,26 +86,70 @@ public class DefaultAutonomous {
     AngleUnit angle = AngleUnit.DEGREES;
     IMU.Parameters imup = new IMU.Parameters(orientationOnRobot);
 
+    static final double     COUNTS_PER_MOTOR_REV    = 537.6;
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159265358979323);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+    static final double     WHEEL_DISTANCE_INCHES   = 12.25;//gnjdfkjhdfbdandgwgfu
+    static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
+    static final String[] possiblePaths = {"avancer", "reculer","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo",};
+    int currentPath = 0;
+    int inchValue = 12;
+    int degreeValue = 90;
+
+    double leftDegreeAngle;
+    double rightDegreeAngle;
+
     public void runOpMode() {
 
-        // InitDrive();
+
+        InitDrive();
         // shooterInit();
         // aimInit();
         // buttoninnit();
         // gooberInit();
         initAprilTag();
-        colorSensorInit();
+        //colorSensorInit();
         telemetryInit();
         runtime.reset();
+
+        waitForStart();
+
+
+
+        while (opModeIsActive()) {
+            if (gamepad1.yWasPressed()) {
+                if (currentPath < possiblePaths.length - 1) {
+                    currentPath += 1;
+                } else {
+                    currentPath = 0;
+                }
+            }
+            else if (gamepad1.xWasPressed())
+            {
+                runPath(possiblePaths[currentPath]);
+            }
+            if (gamepad1.aWasPressed()) {
+                inchValue += 4;
+            }
+            else if (gamepad1.bWasPressed()) {
+                if (!(inchValue == 0)) {
+                    inchValue -= 4;
+                }
+            }
+            telemetryLoop();
+        }
 
         // buttonLoop();
         // boucleDrive();
         // aimLoop();
         // shooterLoop();
         // gooberLoop();
-        aprilTagLoop();
-        colorSensorLoop();
-        telemetryLoop();
+        //aprilTagLoop();
+        //colorSensorLoop();
+
 
     }
 
@@ -127,10 +175,6 @@ public class DefaultAutonomous {
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
 
-        //visionPortal = VisionPortal.easyCreateWithDefaults(
-        //        BuiltinCameraDirection.BACK, aprilTag);
-        // }
-
     }
 
     public void aprilTagLoop(){
@@ -138,8 +182,12 @@ public class DefaultAutonomous {
             if (detection.metadata != null) {
                 if (detection.metadata.name.contains("Obelisk")) {
                     obelisk = obeliskPositions.get(detection.id);
+
                 } else {
                     fieldSide = fieldSidePositions.get(detection.id);
+
+                    fieldSideYaw = -detection.ftcPose.yaw;
+                    turnBoucleDrive(TURN_SPEED, fieldSideYaw, -fieldSideYaw, 5.0);
                 }
 
             }
@@ -160,9 +208,25 @@ public class DefaultAutonomous {
     }
 
     public void aimLoop() {
-        if (gamepad2.dpadUpWasPressed()){
+        if (gamepad1.dpadUpWasPressed()){
             viseurangle += 5;
         } else if (gamepad2.dpadDownWasPressed()) {
+            viseurangle -= 5;
+        }
+
+        shooteraim.setPosition(viseurangle/180);
+    }
+
+    public void autoTestInit() {
+        showAimingTelemetry = true;
+        shooteraim = hardwareMap.get(Servo.class, "servo0");
+        shooteraim.setPosition(viseurangle/180);
+    }
+
+    public void autoTestLoop() {
+        if (gamepad1.dpadUpWasPressed()){
+            viseurangle += 5;
+        } else if (gamepad1.dpadDownWasPressed()) {
             viseurangle -= 5;
         }
 
@@ -178,36 +242,12 @@ public class DefaultAutonomous {
     public void gooberLoop(){
 
         // Change to Gamepad 1, Gamepad 2 is for testing purposes
-        if (gamepad1.right_trigger >= 0.5) {
-            goober.setPower(-1);
-        } else if (gamepad1.left_trigger >= 0.5) {
-            goober.setPower(1);
-        } else {
-            goober.setPower(0);
-        }
+        // Goober motor variable is goober
 
     }
     public void shooterLoop() {
-
-        shooter1.setPower(gamepad2.right_trigger / divider);
-        shooter2.setPower(-gamepad2.right_trigger / divider);
-
-        shooter1.setPower(-gamepad2.left_trigger / divider);
-        shooter2.setPower(gamepad2.left_trigger / divider);
-
-        if (gamepad2.x) {
-            divider = 1;
-
-        }
-        if (gamepad2.y) {
-            divider = 2;
-        }
-        if (gamepad2.b) {
-            divider = 3;
-        }
-        if (gamepad2.a) {
-            divider = 4;
-        }
+        // Shooter motor variables are shooter1 and shooter2
+        // Change the divider variable to make the motors faster or slower
     }
 
 
@@ -218,86 +258,309 @@ public class DefaultAutonomous {
         showImuTelemetry = true;
         // Declare our motors
         // Make sure your ID's match your configuration
-        frontLeftDrive = hardwareMap.dcMotor.get("motor0");
-        backLeftDrive = hardwareMap.dcMotor.get("motor2");
-        frontRightDrive = hardwareMap.dcMotor.get("motor1");
-        backRightDrive = hardwareMap.dcMotor.get("motor3");
-
-        // Reverse the right side motors. This may be wrong for your setup.
-        // If your robot moves backwards when commanded to go forwards,
-        // reverse the left side instead.
-        // See the note about this earlier on this page.
-        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
+        frontLeftDrive = hardwareMap.dcMotor.get("fld");
+        backLeftDrive = hardwareMap.dcMotor.get("bld");
+        frontRightDrive = hardwareMap.dcMotor.get("frd");
+        backRightDrive = hardwareMap.dcMotor.get("brd");
 
 
-    public void boucleDrive() {
-        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x;
 
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio,
-        // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
+        // Initialize the drive system variables.
 
-        frontLeftDrive.setPower(frontLeftPower);
-        backLeftDrive.setPower(backLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backRightDrive.setPower(backRightPower);
-    }
-    public void buttoninnit() {
+        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
+        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
+        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        // backRightDrive.setDirection(DcMotor.Direction.REVERSE); // Reverse because of 3 gears ??????
 
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
-    }
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-    public void buttonLoop() {
-
-
-        // telemetry.addLine("get 50 to win");
-
-        if (end)
-        {
-            return;
-        }
-        if (gamepad1.xWasPressed()) {
-            counter1 +=1;
-        }
-
-        if (gamepad2.xWasPressed()) {
-            counter2 +=1;
-        }
-
-
-        else if (counter1 >= 50) {
-            winner = "player 1";
-            end = true;
-
-        }
-        else if (counter2 >= 50) {
-            winner = "player 2";
-            end = true;
-        }
-
-        telemetry.addData("player 1 score", counter1);
-        telemetry.addData("player 2 score", counter2);
-        telemetry.addData("winner", winner);
-        telemetry.addData("game over", end);
-
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Starting hat",  "%7d :%7d :%7d :%7d",
+                backLeftDrive.getCurrentPosition(),
+                backRightDrive.getCurrentPosition());
         telemetry.update();
+    }
+
+
+    public void boucleDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        leftDegreeAngle = (leftInches * 180) / (Math.PI * WHEEL_DIAMETER_INCHES/2);
+        rightDegreeAngle = (rightInches * 180) / (Math.PI * WHEEL_DIAMETER_INCHES/2);
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
+            backLeftDrive.setTargetPosition(newLeftTarget);
+            frontLeftDrive.setTargetPosition(newLeftTarget);
+
+            backRightDrive.setTargetPosition(-newRightTarget);
+            frontRightDrive.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            backLeftDrive.setPower(Math.abs(speed));
+            backRightDrive.setPower(Math.abs(speed));
+            frontLeftDrive.setPower(Math.abs(speed));
+            frontRightDrive.setPower(Math.abs(speed));
+
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (backLeftDrive.isBusy() && backRightDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+
+
+
+            // Turn off RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+            sleep(250);   // optional pause after each move.
+        }
+    }
+
+    public void turnBoucleDrive(double speed,
+                            double leftDegrees, double rightDegrees,
+                            double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
+
+            backLeftDrive.setTargetPosition(newLeftTarget);
+            frontLeftDrive.setTargetPosition(newLeftTarget);
+
+            backRightDrive.setTargetPosition(-newRightTarget);
+            frontRightDrive.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            backLeftDrive.setPower(Math.abs(speed));
+            backRightDrive.setPower(Math.abs(speed));
+            frontLeftDrive.setPower(Math.abs(speed));
+            frontRightDrive.setPower(Math.abs(speed));
+
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (backLeftDrive.isBusy() && backRightDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+
+
+
+            // Turn off RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+            sleep(250);   // optional pause after each move.
+        }
+    }
+
+    public void boucleDriveCrabe(double speed,
+                            double leftInches, double rightInches, double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
+            backRightDrive.setTargetPosition(-newLeftTarget);
+            frontLeftDrive.setTargetPosition(newLeftTarget);
+
+            backLeftDrive.setTargetPosition(newRightTarget);
+            frontRightDrive.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            backLeftDrive.setPower(Math.abs(speed));
+            backRightDrive.setPower(Math.abs(speed));
+            frontLeftDrive.setPower(Math.abs(speed));
+            frontRightDrive.setPower(Math.abs(speed));
+
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (backLeftDrive.isBusy() && backRightDrive.isBusy() && frontRightDrive.isBusy() && frontLeftDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+
+
+
+            // Turn off RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+            sleep(250);   // optional pause after each move.
+        }
+    }
+
+
+    public void runPath(String path) {
+        if (Objects.equals(path, "testCombo")) {
+            boucleDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            boucleDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+            boucleDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        } else if (Objects.equals(path, "one")) {
+            boucleDrive(DRIVE_SPEED,  65.80,  65.8, 3.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            boucleDrive(TURN_SPEED,   24, -24, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+            boucleDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        }  else if (Objects.equals(path, "short")) {
+            boucleDrive(DRIVE_SPEED, 54, 54, 0.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            boucleDrive(TURN_SPEED, 20, -20, 0.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+            boucleDrive(DRIVE_SPEED, 30, 30, 0.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(TURN_SPEED, 8, -8, 0.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(DRIVE_SPEED, 19, 19, 1.5);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(TURN_SPEED, 6, -6, 0.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(DRIVE_SPEED, 44, 44, 0.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(TURN_SPEED, 10, -10, 2.5);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(DRIVE_SPEED, 70, 70, 0.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            boucleDrive(TURN_SPEED, 7, -7, 6.7);  // S3: Reverse 24 Inches with 4 Sec timeout
+        } else if (Objects.equals(path, "avancer")) {
+            boucleDrive(DRIVE_SPEED,  inchValue,  inchValue, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        } else if (Objects.equals(path, "reculer")) {
+            boucleDrive(DRIVE_SPEED,  -inchValue,  -inchValue, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        } else if (Objects.equals(path, "tournerCLOCK")) {
+            turnBoucleDrive(TURN_SPEED, degreeValue, -degreeValue, 5.0);
+        } else if (Objects.equals(path, "tournerCOUNTER")) {
+            turnBoucleDrive(TURN_SPEED, -degreeValue, degreeValue, 5.0);
+        } else if (Objects.equals(path,"crabeRIGHT")) {
+            boucleDriveCrabe(DRIVE_SPEED, inchValue, -inchValue, 5.0);
+        } else if (Objects.equals(path,"crabeLEFT")) {
+            boucleDriveCrabe(DRIVE_SPEED, -inchValue, inchValue, 5.0);
+        }
+        telemetry.addData("Path", "Complete " + path);
+        telemetry.update();
+        sleep(1000);  // pause to display final telemetry message.
     }
 
     public void colorSensorInit() {
         showColorTelemetry = true;
-        sensor = hardwareMap.get(NormalizedColorSensor.class,"sensor");
+        sensor = hardwareMap.get(NormalizedColorSensor.class,"colorsensor");
     }
     public void colorSensorLoop(){
-
+        // La variable du senseur de couleur est sensor
+        // Pour l'invoquer en tant que senseur de distance, on doit mettre des parentheses, comme ceci: (OpticalDistanceSensor sensor).
     }
     public void telemetryInit(){
         telemetry.addData("status", "initialized");
@@ -311,6 +574,9 @@ public class DefaultAutonomous {
     public void telemetryLoop(){
 
         telemetry.addData("status", "runtime: " + runtime.toString());
+        telemetry.addData("current path id", currentPath);
+        telemetry.addData("current path", possiblePaths[currentPath]);
+        telemetry.addData("inches", inchValue);
 
         if (showImuTelemetry) {
             telemetry.addData("yaw", imu.getRobotYawPitchRollAngles().getYaw(angle));
@@ -329,6 +595,7 @@ public class DefaultAutonomous {
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
+
                     telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));

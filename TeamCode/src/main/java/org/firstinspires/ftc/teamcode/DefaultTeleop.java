@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -32,18 +33,21 @@ public class DefaultTeleop extends LinearOpMode {
     boolean showColorTelemetry = false;
     boolean showAimingTelemetry = false;
     boolean showGooberTelemetry = false;
-    boolean showCameraTelemetry = false;
+
+    private DcMotorEx shooter1;
+    private DcMotorEx shooter2;
+    final double SHOOTER_TICKS_PER_REV = 28;
 
 
-    private DcMotor shooter1;
-    private DcMotor shooter2;
     private DcMotor goober;
+    private DcMotor goober2;
     private NormalizedColorSensor sensor;
     private Servo shooteraim;
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    private Integer divider = 1;
+    private double shooterPower = 0.5;
+    double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
     double counter1 = 0;
     double counter2 = 0;
@@ -69,13 +73,13 @@ public class DefaultTeleop extends LinearOpMode {
     DcMotor backLeftDrive;
     DcMotor backRightDrive;
 
-    RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-    RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+    RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
+    RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
 
-    // This declares the IMU needed to get the current direction the robot is facing
+    // This declares the IMU needed to get the current direction the robot is faci ng
     IMU imu;
     AngleUnit angle = AngleUnit.DEGREES;
     IMU.Parameters imup = new IMU.Parameters(orientationOnRobot);
@@ -86,83 +90,38 @@ public class DefaultTeleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // InitDrive();
-        // shooterInit();
-        // aimInit();
-        // buttoninnit();
-        // gooberInit();
-        initAprilTag();
-        colorSensorInit();
+        InitDrive();
+        shooterInit();
+        aimInit();
+        gooberInit();
+        // colorSensorInit();
         telemetryInit();
         waitForStart();
         runtime.reset();
 
         if (isStopRequested()) return;
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             // buttonLoop();
-            // boucleDrive();
-            // aimLoop();
-            // shooterLoop();
-            // gooberLoop();
-            aprilTagLoop();
-            colorSensorLoop();
+            boucleDrive();
+            aimLoop();
+            shooterLoop();
+            gooberLoop();
+            // colorSensorLoop();
             telemetryLoop();
         }
 
     }
 
-    public void initAprilTag() {
-
-        showCameraTelemetry = true;
-
-        obeliskPositions = new HashMap<Integer, String>();
-        obeliskPositions.put(21,"GPP");
-        obeliskPositions.put(22,"PGP");
-        obeliskPositions.put(23,"PPG");
-
-
-        fieldSidePositions = new HashMap<Integer, String>();
-        fieldSidePositions.put(20,"blue");
-        fieldSidePositions.put(24,"red");
-
-        // Create the AprilTag processor the easy way.
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-
-        // Create the vision portal the easy way.
-        // if (USE_WEBCAM) {
-        visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
-
-        //visionPortal = VisionPortal.easyCreateWithDefaults(
-        //        BuiltinCameraDirection.BACK, aprilTag);
-        // }
-
-    }
-
-    public void aprilTagLoop(){
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
-            if (detection.metadata != null) {
-                if (detection.metadata.name.contains("Obelisk")) {
-                    obelisk = obeliskPositions.get(detection.id);
-                } else {
-                    fieldSide = fieldSidePositions.get(detection.id);
-                }
-
-            }
-
-        }
-    }
-
     public void shooterInit() {
         showShooterTelemetry = true;
-        shooter1 = hardwareMap.get(DcMotor.class, "leftshooter");
-        shooter2 = hardwareMap.get(DcMotor.class, "rightshooter");
+        shooter1 = hardwareMap.get(DcMotorEx.class, "leftshooter");
+        shooter2 = hardwareMap.get(DcMotorEx.class, "rightshooter");
     }
 
     public void aimInit() {
         showAimingTelemetry = true;
-        shooteraim = hardwareMap.get(Servo.class, "servo0");
+        shooteraim = hardwareMap.get(Servo.class, "aimservo");
         shooteraim.setPosition(viseurangle/180);
     }
 
@@ -178,42 +137,55 @@ public class DefaultTeleop extends LinearOpMode {
 
     public void gooberInit(){
         showGooberTelemetry = true;
-        goober = hardwareMap.get(DcMotor.class, "goober");
+        goober = hardwareMap.get(DcMotorEx.class, "goober");
+        goober2 = hardwareMap.get(DcMotorEx.class, "goober2");
 
     }
 
     public void gooberLoop(){
 
         // Change to Gamepad 1, Gamepad 2 is for testing purposes
-        if (gamepad1.right_trigger >= 0.5) {
-            goober.setPower(-1);
-        } else if (gamepad1.left_trigger >= 0.5) {
+        if (gamepad2.dpad_left) {
             goober.setPower(1);
+            goober2.setPower(-1);
+        } else if (gamepad2.dpad_right) {
+            goober.setPower(-1);
+            goober2.setPower(1);
         } else {
             goober.setPower(0);
+            goober2.setPower(0);
         }
 
     }
     public void shooterLoop() {
 
-        shooter1.setPower(gamepad2.right_trigger / divider);
-        shooter2.setPower(-gamepad2.right_trigger / divider);
+        shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
-        shooter1.setPower(-gamepad2.left_trigger / divider);
-        shooter2.setPower(gamepad2.left_trigger / divider);
+        shooter1.setVelocity(-gamepad2.right_trigger * shooterTPS);
+        shooter2.setVelocity(gamepad2.right_trigger * shooterTPS);
 
-        if (gamepad2.x) {
-            divider = 1;
-
+        if (gamepad2.xWasPressed()) {
+            if (shooterPower <= 1.0){ return; }
+            shooterPower -= 0.05;
         }
-        if (gamepad2.y) {
-            divider = 2;
+        if (gamepad2.yWasPressed()) {
+            if (shooterPower >= 1.0){ return; }
+            if (shooterPower == 0.95) {
+                shooterPower += 0.05;
+                return;
+            }
+            shooterPower += 0.1;
         }
-        if (gamepad2.b) {
-            divider = 3;
+        if (gamepad2.bWasPressed()) {
+            if (shooterPower >= 0.0){ return; }
+            shooterPower += 0.05;
         }
-        if (gamepad2.a) {
-            divider = 4;
+        if (gamepad2.aWasPressed()) {
+            if (shooterPower <= 0.0){ return; }
+            if (shooterPower == 0.05) {
+                shooterPower -= 0.05;
+            }
+            shooterPower -= 0.1;
         }
     }
 
@@ -225,16 +197,18 @@ public class DefaultTeleop extends LinearOpMode {
         showImuTelemetry = true;
         // Declare our motors
         // Make sure your ID's match your configuration
-        frontLeftDrive = hardwareMap.dcMotor.get("motor0");
-        backLeftDrive = hardwareMap.dcMotor.get("motor2");
-        frontRightDrive = hardwareMap.dcMotor.get("motor1");
-        backRightDrive = hardwareMap.dcMotor.get("motor3");
+        frontLeftDrive = hardwareMap.dcMotor.get("fld");
+        backLeftDrive = hardwareMap.dcMotor.get("bld");
+		frontRightDrive = hardwareMap.dcMotor.get("frd");
+        backRightDrive = hardwareMap.dcMotor.get("brd");
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
         // See the note about this earlier on this page.
-        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
@@ -301,7 +275,7 @@ public class DefaultTeleop extends LinearOpMode {
 
     public void colorSensorInit() {
         showColorTelemetry = true;
-        sensor = hardwareMap.get(NormalizedColorSensor.class,"sensor");
+        sensor = hardwareMap.get(NormalizedColorSensor.class,"colorsensor");
     }
     public void colorSensorLoop(){
 
@@ -329,35 +303,10 @@ public class DefaultTeleop extends LinearOpMode {
             telemetry.addData("angular velocity z", imu.getRobotAngularVelocity(angle).zRotationRate);
         }
 
-        if (showCameraTelemetry) {
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-            telemetry.addData("number of apriltags", currentDetections.size());
-
-            // Step through the list of detections and display info for each one.
-            for (AprilTagDetection detection : currentDetections) {
-                if (detection.metadata != null) {
-                    telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));
-                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-                } else {
-                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-                }
-            }   // end for() loop
-
-            // Add "key" information to telemetry
-            telemetry.addLine("key:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-            telemetry.addLine("RBE = Range, Bearing & Elevation");
-
-            telemetry.addData("Last seen Pattern", obelisk);
-            telemetry.addData("Last seen Target", fieldSide);
-        }
-
         if (showShooterTelemetry) {
             telemetry.addData("left Shooter power", shooter1.getPower());
             telemetry.addData("right Shooter power", shooter2.getPower());
+            telemetry.addData("motor shooterPower", shooterPower);
         }
 
         if (showColorTelemetry) {
