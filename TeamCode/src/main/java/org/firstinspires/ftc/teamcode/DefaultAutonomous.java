@@ -45,17 +45,15 @@ public class DefaultAutonomous extends LinearOpMode {
     private NormalizedColorSensor sensor;
     private Servo shooteraim;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
-    private Integer divider = 1;
+    private final Integer divider = 1;
 
     double counter1 = 0;
     double counter2 = 0;
 
     private String obelisk;
     private String fieldSide;
-    private double fieldSideDistance;
-    private double fieldSideYaw;
 
     Map<Integer, String> obeliskPositions;
     Map<Integer, String> fieldSidePositions;
@@ -89,18 +87,14 @@ public class DefaultAutonomous extends LinearOpMode {
     static final double     COUNTS_PER_MOTOR_REV    = 537.6;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159265358979323);
+    static final double     WHEEL_DISTANCE_INCHES   = 12.25;
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final double     WHEEL_DISTANCE_INCHES   = 12.25;//gnjdfkjhdfbdandgwgfu
-    static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
     static final String[] possiblePaths = {"avancer", "reculer","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo",};
     int currentPath = 0;
     int inchValue = 12;
-    int degreeValue = 90;
-
-    double leftDegreeAngle;
-    double rightDegreeAngle;
 
     public void runOpMode() {
 
@@ -182,12 +176,19 @@ public class DefaultAutonomous extends LinearOpMode {
             if (detection.metadata != null) {
                 if (detection.metadata.name.contains("Obelisk")) {
                     obelisk = obeliskPositions.get(detection.id);
-
-                } else {
+                 } else {
                     fieldSide = fieldSidePositions.get(detection.id);
 
-                    fieldSideYaw = -detection.ftcPose.yaw;
-                    turnBoucleDrive(TURN_SPEED, fieldSideYaw, -fieldSideYaw, 5.0);
+                    // [TODO] Try figuring this out with detection.ftcPose.x and the crabeBoucleDrive() function like Thierry said
+
+                    double fieldSideYaw = -detection.ftcPose.yaw;
+                    final double tolerance = 2;
+                    double fieldSideDistance = detection.ftcPose.x - 70.5;
+                    if (Math.abs(fieldSideYaw) > tolerance) {
+                        turnBoucleDrive(TURN_SPEED, fieldSideYaw, -fieldSideYaw, 5.0);
+                    }
+
+
                 }
 
             }
@@ -292,22 +293,22 @@ public class DefaultAutonomous extends LinearOpMode {
         telemetry.update();
     }
 
-
-    public void boucleDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
+    public void turnBoucleDrive(double speed,
+                                double leftDegrees, double rightDegrees,
+                                double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
 
-        leftDegreeAngle = (leftInches * 180) / (Math.PI * WHEEL_DIAMETER_INCHES/2);
-        rightDegreeAngle = (rightInches * 180) / (Math.PI * WHEEL_DIAMETER_INCHES/2);
+        int leftDegreeAngle;
+        int rightDegreeAngle;
+
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
 
             backLeftDrive.setTargetPosition(newLeftTarget);
             frontLeftDrive.setTargetPosition(newLeftTarget);
@@ -368,20 +369,18 @@ public class DefaultAutonomous extends LinearOpMode {
             sleep(250);   // optional pause after each move.
         }
     }
-
-    public void turnBoucleDrive(double speed,
-                            double leftDegrees, double rightDegrees,
-                            double timeoutS) {
+    public void boucleDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
-
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
-            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
 
             backLeftDrive.setTargetPosition(newLeftTarget);
             frontLeftDrive.setTargetPosition(newLeftTarget);
@@ -541,12 +540,12 @@ public class DefaultAutonomous extends LinearOpMode {
         } else if (Objects.equals(path, "reculer")) {
             boucleDrive(DRIVE_SPEED,  -inchValue,  -inchValue, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         } else if (Objects.equals(path, "tournerCLOCK")) {
-            turnBoucleDrive(TURN_SPEED, degreeValue, -degreeValue, 5.0);
+            boucleDrive(DRIVE_SPEED,  inchValue,  -inchValue, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         } else if (Objects.equals(path, "tournerCOUNTER")) {
-            turnBoucleDrive(TURN_SPEED, -degreeValue, degreeValue, 5.0);
-        } else if (Objects.equals(path,"crabeRIGHT")) {
-            boucleDriveCrabe(DRIVE_SPEED, inchValue, -inchValue, 5.0);
+            boucleDrive(DRIVE_SPEED,  -inchValue,  inchValue, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         } else if (Objects.equals(path,"crabeLEFT")) {
+            boucleDriveCrabe(DRIVE_SPEED, inchValue, -inchValue, 5.0);
+        } else if (Objects.equals(path,"crabeRIGHT")) {
             boucleDriveCrabe(DRIVE_SPEED, -inchValue, inchValue, 5.0);
         }
         telemetry.addData("Path", "Complete " + path);
@@ -595,7 +594,6 @@ public class DefaultAutonomous extends LinearOpMode {
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
-
                     telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));
                     telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
@@ -657,5 +655,5 @@ public class DefaultAutonomous extends LinearOpMode {
         }
 
         telemetry.update();
-    };
+    }
 }

@@ -33,6 +33,7 @@ public class DefaultTeleop extends LinearOpMode {
     boolean showColorTelemetry = false;
     boolean showAimingTelemetry = false;
     boolean showGooberTelemetry = false;
+    boolean showCameraTelemetry = false;
 
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
@@ -44,7 +45,7 @@ public class DefaultTeleop extends LinearOpMode {
     private NormalizedColorSensor sensor;
     private Servo shooteraim;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     private double shooterPower = 0.5;
     double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
@@ -84,6 +85,15 @@ public class DefaultTeleop extends LinearOpMode {
     AngleUnit angle = AngleUnit.DEGREES;
     IMU.Parameters imup = new IMU.Parameters(orientationOnRobot);
 
+    static final double     COUNTS_PER_MOTOR_REV    = 537.6;
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     WHEEL_DISTANCE_INCHES   = 12.25;
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
+    static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+
 
 
 
@@ -92,7 +102,6 @@ public class DefaultTeleop extends LinearOpMode {
 
         InitDrive();
         shooterInit();
-        aimInit();
         gooberInit();
         // colorSensorInit();
         telemetryInit();
@@ -104,7 +113,6 @@ public class DefaultTeleop extends LinearOpMode {
         while (opModeIsActive()) {
             // buttonLoop();
             boucleDrive();
-            aimLoop();
             shooterLoop();
             gooberLoop();
             // colorSensorLoop();
@@ -117,22 +125,6 @@ public class DefaultTeleop extends LinearOpMode {
         showShooterTelemetry = true;
         shooter1 = hardwareMap.get(DcMotorEx.class, "leftshooter");
         shooter2 = hardwareMap.get(DcMotorEx.class, "rightshooter");
-    }
-
-    public void aimInit() {
-        showAimingTelemetry = true;
-        shooteraim = hardwareMap.get(Servo.class, "aimservo");
-        shooteraim.setPosition(viseurangle/180);
-    }
-
-    public void aimLoop() {
-        if (gamepad2.dpadUpWasPressed()){
-            viseurangle += 5;
-        } else if (gamepad2.dpadDownWasPressed()) {
-            viseurangle -= 5;
-        }
-
-        shooteraim.setPosition(viseurangle/180);
     }
 
     public void gooberInit(){
@@ -189,9 +181,54 @@ public class DefaultTeleop extends LinearOpMode {
         }
     }
 
+    public void initAprilTag() {
+
+        showCameraTelemetry = true;
+
+        obeliskPositions = new HashMap<Integer, String>();
+        obeliskPositions.put(21,"GPP");
+        obeliskPositions.put(22,"PGP");
+        obeliskPositions.put(23,"PPG");
 
 
+        fieldSidePositions = new HashMap<Integer, String>();
+        fieldSidePositions.put(20,"blue");
+        fieldSidePositions.put(24,"red");
 
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        // if (USE_WEBCAM) {
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
+
+    }
+
+    public void aprilTagLoop(){
+        for (AprilTagDetection detection : aprilTag.getDetections()) {
+            if (detection.metadata != null) {
+                if (detection.metadata.name.contains("Obelisk")) {
+                    obelisk = obeliskPositions.get(detection.id);
+                } else {
+                    fieldSide = fieldSidePositions.get(detection.id);
+
+                    if (gamepad1.leftBumperWasPressed()) {
+                        double fieldSideYaw = -detection.ftcPose.yaw;
+                        final double tolerance = 2;
+                        double fieldSideDistance = detection.ftcPose.x - 70.5;
+                        if (Math.abs(fieldSideYaw) > tolerance) {
+                            turnBoucleDrive(TURN_SPEED, fieldSideYaw, -fieldSideYaw, 5.0);
+                        }
+                    }
+
+
+                }
+
+            }
+
+        }
+    }
 
     public void InitDrive() {
         showImuTelemetry = true;
@@ -244,6 +281,82 @@ public class DefaultTeleop extends LinearOpMode {
         backLeftDrive.setPower(backLeftPower);
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
+    }
+    public void turnBoucleDrive(double speed,
+                                double leftDegrees, double rightDegrees,
+                                double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        int leftDegreeAngle;
+        int rightDegreeAngle;
+
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightDegrees * INCHES_PER_DEGREE * COUNTS_PER_INCH);
+
+            backLeftDrive.setTargetPosition(newLeftTarget);
+            frontLeftDrive.setTargetPosition(newLeftTarget);
+
+            backRightDrive.setTargetPosition(-newRightTarget);
+            frontRightDrive.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            backLeftDrive.setPower(Math.abs(speed));
+            backRightDrive.setPower(Math.abs(speed));
+            frontLeftDrive.setPower(Math.abs(speed));
+            frontRightDrive.setPower(Math.abs(speed));
+
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (backLeftDrive.isBusy() && backRightDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+
+
+
+            // Turn off RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+            sleep(250);   // optional pause after each move.
+        }
     }
     public void buttoninnit() {
 
@@ -359,5 +472,7 @@ public class DefaultTeleop extends LinearOpMode {
         }
 
         telemetry.update();
-    };
+    }
 }
+
+//jku./
