@@ -1,15 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
@@ -29,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Autonomous(name="Mode Autonome Sec 2 27402")
-public class DefaultAutonomous extends LinearOpMode {
+@Autonomous(name="KP, K D, etc finder")
+public class KPFinder extends LinearOpMode {
     boolean showImuTelemetry = false;
     boolean showShooterTelemetry = false;
     boolean showColorTelemetry = false;

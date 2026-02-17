@@ -93,6 +93,8 @@ public class DefaultTeleop extends LinearOpMode {
     static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
+    static final double     APRILTAG_TOLERANCE_ANGLE= 5;
+    static final double     APRILTAG_TOLERANCE_SIDE= 8;
 
 
 
@@ -214,16 +216,13 @@ public class DefaultTeleop extends LinearOpMode {
                     fieldSide = fieldSidePositions.get(detection.id);
 
                     if (gamepad1.leftBumperWasPressed()) {
-                        double fieldSideYaw = -detection.ftcPose.yaw;
-                        final double tolerance = 2;
-                        double fieldSideDistance = detection.ftcPose.x - 70.5;
-                        if (Math.abs(fieldSideYaw) > tolerance) {
-                            turnBoucleDrive(TURN_SPEED, fieldSideYaw, -fieldSideYaw, 5.0);
+                        if(Math.abs(detection.ftcPose.x) > APRILTAG_TOLERANCE_SIDE);  {
+                             autoDriveCrabe(DRIVE_SPEED, detection.ftcPose.x, -detection.ftcPose.x, 5.0);
                         }
                     }
 
-
                 }
+
 
             }
 
@@ -248,7 +247,6 @@ public class DefaultTeleop extends LinearOpMode {
         frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
     }
-
 
     public void boucleDrive() {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
@@ -282,7 +280,8 @@ public class DefaultTeleop extends LinearOpMode {
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
     }
-    public void turnBoucleDrive(double speed,
+
+    public void autoDriveTurn(double speed,
                                 double leftDegrees, double rightDegrees,
                                 double timeoutS) {
         int newLeftTarget;
@@ -358,6 +357,77 @@ public class DefaultTeleop extends LinearOpMode {
             sleep(250);   // optional pause after each move.
         }
     }
+    public void autoDriveCrabe(double speed,
+                                double leftInches, double rightInches, double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+
+            backRightDrive.setTargetPosition(-newLeftTarget);
+            frontLeftDrive.setTargetPosition(newLeftTarget);
+
+            backLeftDrive.setTargetPosition(newRightTarget);
+            frontRightDrive.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            backLeftDrive.setPower(Math.abs(speed));
+            backRightDrive.setPower(Math.abs(speed));
+            frontLeftDrive.setPower(Math.abs(speed));
+            frontRightDrive.setPower(Math.abs(speed));
+
+
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (backLeftDrive.isBusy() && backRightDrive.isBusy() && frontRightDrive.isBusy() && frontLeftDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Currently at",  " at %7d :%7d",
+                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+
+
+
+            // Turn off RUN_TO_POSITION
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+            sleep(250);   // optional pause after each move.
+        }
+    }
     public void buttoninnit() {
 
 
@@ -403,9 +473,11 @@ public class DefaultTeleop extends LinearOpMode {
         showColorTelemetry = true;
         sensor = hardwareMap.get(NormalizedColorSensor.class,"colorsensor");
     }
+
     public void colorSensorLoop(){
 
     }
+
     public void telemetryInit(){
         telemetry.addData("status", "initialized");
         telemetry.update();
@@ -417,7 +489,7 @@ public class DefaultTeleop extends LinearOpMode {
 
     public void telemetryLoop(){
 
-        telemetry.addData("status", "runtime: " + runtime.toString());
+        telemetry.addData("status", "runtime: " + runtime);
 
         if (showImuTelemetry) {
             telemetry.addData("yaw", imu.getRobotYawPitchRollAngles().getYaw(angle));
@@ -474,5 +546,8 @@ public class DefaultTeleop extends LinearOpMode {
         telemetry.update();
     }
 }
+
+
+
 
 //jku./
