@@ -61,7 +61,6 @@ public class DefaultAutonomous extends LinearOpMode {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
-    double viseurangle = 90;
     boolean end = false;
     String winner = "none";
 
@@ -92,7 +91,7 @@ public class DefaultAutonomous extends LinearOpMode {
     static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final String[] possiblePaths = {"avancer", "reculer","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo",};
+    static final String[] possiblePaths = {"avancer", "reculer","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
     int currentPath = 0;
     int inchValue = 12;
 
@@ -201,39 +200,6 @@ public class DefaultAutonomous extends LinearOpMode {
         shooter1 = hardwareMap.get(DcMotor.class, "leftshooter");
         shooter2 = hardwareMap.get(DcMotor.class, "rightshooter");
     }
-
-    public void aimInit() {
-        showAimingTelemetry = true;
-        shooteraim = hardwareMap.get(Servo.class, "servo0");
-        shooteraim.setPosition(viseurangle/180);
-    }
-
-    public void aimLoop() {
-        if (gamepad1.dpadUpWasPressed()){
-            viseurangle += 5;
-        } else if (gamepad2.dpadDownWasPressed()) {
-            viseurangle -= 5;
-        }
-
-        shooteraim.setPosition(viseurangle/180);
-    }
-
-    public void autoTestInit() {
-        showAimingTelemetry = true;
-        shooteraim = hardwareMap.get(Servo.class, "servo0");
-        shooteraim.setPosition(viseurangle/180);
-    }
-
-    public void autoTestLoop() {
-        if (gamepad1.dpadUpWasPressed()){
-            viseurangle += 5;
-        } else if (gamepad1.dpadDownWasPressed()) {
-            viseurangle -= 5;
-        }
-
-        shooteraim.setPosition(viseurangle/180);
-    }
-
     public void gooberInit(){
         showGooberTelemetry = true;
         goober = hardwareMap.get(DcMotor.class, "goober");
@@ -547,6 +513,8 @@ public class DefaultAutonomous extends LinearOpMode {
             boucleDriveCrabe(DRIVE_SPEED, inchValue, -inchValue, 5.0);
         } else if (Objects.equals(path,"crabeRIGHT")) {
             boucleDriveCrabe(DRIVE_SPEED, -inchValue, inchValue, 5.0);
+        } else if (Objects.equals(path, "richel")) {
+
         }
         telemetry.addData("Path", "Complete " + path);
         telemetry.update();
@@ -642,11 +610,6 @@ public class DefaultAutonomous extends LinearOpMode {
             }
 
             telemetry.addData("Ball color", ballColor);
-        }
-
-        if (showAimingTelemetry) {
-            telemetry.addData("Servo Position", shooteraim.getPosition());
-            telemetry.addData("viseurangle", viseurangle);
         }
 
         if (showGooberTelemetry) {
