@@ -90,7 +90,12 @@ public class DefaultTeleop extends LinearOpMode {
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
     static final double     APRILTAG_TOLERANCE_ANGLE= 5;
-    static final double     APRILTAG_TOLERANCE_SIDE= 8;
+    static final double     APRILTAG_TOLERANCE_SIDE = 8;
+
+    static final double     SHOOTER_P              = 250;
+    static final double     SHOOTER_I              = 2;
+    static final double     SHOOTER_D              = 2;
+    static final double     SHOOTER_F              = 0;
 
 
 
@@ -123,6 +128,8 @@ public class DefaultTeleop extends LinearOpMode {
         showShooterTelemetry = true;
         shooter1 = hardwareMap.get(DcMotorEx.class, "leftshooter");
         shooter2 = hardwareMap.get(DcMotorEx.class, "rightshooter");
+        shooter1.setVelocityPIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F);
+        shooter2.setVelocityPIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F);
     }
 
     public void gooberInit(){
@@ -141,19 +148,22 @@ public class DefaultTeleop extends LinearOpMode {
         } else if (gamepad2.right_bumper) {
             goober.setPower(-1);
             goober2.setPower(1);
-        } else if (gamepad1.dpad_left) {
+        } else if (gamepad2.dpad_left) {
             goober.setPower(1);
             goober2.setPower(0);
-        } else if (gamepad1.dpad_right) {
+        } else if (gamepad2.dpad_right) {
             goober.setPower(-1);
             goober2.setPower(0);
-        } else if (gamepad1.dpad_up) {
+        } else if (gamepad2.dpad_up) {
         goober.setPower(0);
         goober2.setPower(1);
-    } else if (gamepad1.dpad_down) {
+    } else if (gamepad2.dpad_down) {
         goober.setPower(0);
         goober2.setPower(-1);
-    }
+    } else {
+            goober.setPower(0);
+            goober2.setPower(0);
+        }
 
     }
     public void shooterLoop() {
@@ -292,11 +302,19 @@ public class DefaultTeleop extends LinearOpMode {
         frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
+    public void autoDriveCancel() {
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
 
     public void autoDriveTurn(double speed,
                                 double leftDegrees, double rightDegrees,
