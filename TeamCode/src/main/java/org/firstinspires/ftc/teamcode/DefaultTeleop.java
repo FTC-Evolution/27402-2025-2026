@@ -31,7 +31,6 @@ public class DefaultTeleop extends LinearOpMode {
     boolean showImuTelemetry = false;
     boolean showShooterTelemetry = false;
     boolean showColorTelemetry = false;
-    boolean showAimingTelemetry = false;
     boolean showGooberTelemetry = false;
     boolean showCameraTelemetry = false;
 
@@ -43,11 +42,10 @@ public class DefaultTeleop extends LinearOpMode {
     private DcMotor goober;
     private DcMotor goober2;
     private NormalizedColorSensor sensor;
-    private Servo shooteraim;
 
     private final ElapsedTime runtime = new ElapsedTime();
 
-    private double shooterPower = 0.5;
+    private double shooterPower = 40; // Perfect speed to throw the ball when at the point of the launch triangle on the field
     double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
     double counter1 = 0;
@@ -61,8 +59,6 @@ public class DefaultTeleop extends LinearOpMode {
 
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-
-    double viseurangle = 90;
     boolean end = false;
     String winner = "none";
 
@@ -139,16 +135,25 @@ public class DefaultTeleop extends LinearOpMode {
     public void gooberLoop(){
 
         // Change to Gamepad 1, Gamepad 2 is for testing purposes
-        if (gamepad2.dpad_left) {
+        if (gamepad2.left_bumper) {
             goober.setPower(1);
             goober2.setPower(-1);
-        } else if (gamepad2.dpad_right) {
+        } else if (gamepad2.right_bumper) {
             goober.setPower(-1);
             goober2.setPower(1);
-        } else {
-            goober.setPower(0);
+        } else if (gamepad1.dpad_left) {
+            goober.setPower(1);
             goober2.setPower(0);
-        }
+        } else if (gamepad1.dpad_right) {
+            goober.setPower(-1);
+            goober2.setPower(0);
+        } else if (gamepad1.dpad_up) {
+        goober.setPower(0);
+        goober2.setPower(1);
+    } else if (gamepad1.dpad_down) {
+        goober.setPower(0);
+        goober2.setPower(-1);
+    }
 
     }
     public void shooterLoop() {
@@ -159,27 +164,27 @@ public class DefaultTeleop extends LinearOpMode {
         shooter2.setVelocity(gamepad2.right_trigger * shooterTPS);
 
         if (gamepad2.xWasPressed()) {
-            if (shooterPower <= 1.0){ return; }
-            shooterPower -= 0.05;
+            if (shooterPower <= 100){ return; }
+            shooterPower -= 5;
         }
         if (gamepad2.yWasPressed()) {
-            if (shooterPower >= 1.0){ return; }
-            if (shooterPower == 0.95) {
-                shooterPower += 0.05;
+            if (shooterPower >= 100){ return; }
+            if (shooterPower == 95) {
+                shooterPower += 5;
                 return;
             }
-            shooterPower += 0.1;
+            shooterPower += 10;
         }
         if (gamepad2.bWasPressed()) {
-            if (shooterPower >= 0.0){ return; }
-            shooterPower += 0.05;
+            if (shooterPower >= 100){ return; }
+            shooterPower += 5;
         }
         if (gamepad2.aWasPressed()) {
-            if (shooterPower <= 0.0){ return; }
-            if (shooterPower == 0.05) {
-                shooterPower -= 0.05;
+            if (shooterPower <= 10){ return; }
+            if (shooterPower >= 5) {
+                shooterPower -= 5;
             }
-            shooterPower -= 0.1;
+            shooterPower -= 10;
         }
     }
 
@@ -281,9 +286,23 @@ public class DefaultTeleop extends LinearOpMode {
         backRightDrive.setPower(backRightPower);
     }
 
+    public void autoDriveSetup() {
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
     public void autoDriveTurn(double speed,
                                 double leftDegrees, double rightDegrees,
                                 double timeoutS) {
+
+        autoDriveSetup();
         int newLeftTarget;
         int newRightTarget;
 
@@ -359,6 +378,7 @@ public class DefaultTeleop extends LinearOpMode {
     }
     public void autoDriveCrabe(double speed,
                                 double leftInches, double rightInches, double timeoutS) {
+        autoDriveSetup();
         int newLeftTarget;
         int newRightTarget;
 
@@ -531,11 +551,6 @@ public class DefaultTeleop extends LinearOpMode {
             }
 
             telemetry.addData("Ball color", ballColor);
-        }
-
-        if (showAimingTelemetry) {
-            telemetry.addData("Servo Position", shooteraim.getPosition());
-            telemetry.addData("viseurangle", viseurangle);
         }
 
         if (showGooberTelemetry) {
