@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gam
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -538,6 +540,7 @@ public class DefaultAutonomous extends LinearOpMode {
         imu.resetYaw();
     }
 
+    @SuppressLint("DefaultLocale")
     public void telemetryLoop(){
 
         telemetry.addData("status", "runtime: " + runtime);
