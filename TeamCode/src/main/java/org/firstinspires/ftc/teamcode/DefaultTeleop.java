@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -92,10 +94,13 @@ public class DefaultTeleop extends LinearOpMode {
     static final double     APRILTAG_TOLERANCE_ANGLE= 5;
     static final double     APRILTAG_TOLERANCE_SIDE = 8;
 
-    static final double     SHOOTER_P              = 250;
-    static final double     SHOOTER_I              = 2;
-    static final double     SHOOTER_D              = 2;
+    static final double     SHOOTER_P              = 90;
+    static final double     SHOOTER_I              = 1.95;
+    static final double     SHOOTER_D              = 0.1;
     static final double     SHOOTER_F              = 0;
+
+    static final int        CAMERA_RES_WIDTH       = 640;
+    static final int        CAMERA_RES_HEIGHT      = 480;
 
 
 
@@ -128,8 +133,16 @@ public class DefaultTeleop extends LinearOpMode {
         showShooterTelemetry = true;
         shooter1 = hardwareMap.get(DcMotorEx.class, "leftshooter");
         shooter2 = hardwareMap.get(DcMotorEx.class, "rightshooter");
+
         shooter1.setVelocityPIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F);
         shooter2.setVelocityPIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F);
+
+        // Reset encoders
+        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void gooberInit(){
@@ -173,28 +186,35 @@ public class DefaultTeleop extends LinearOpMode {
         shooter1.setVelocity(-gamepad2.right_trigger * shooterTPS);
         shooter2.setVelocity(gamepad2.right_trigger * shooterTPS);
 
-        if (gamepad2.xWasPressed()) {
-            if (shooterPower <= 100){ return; }
+        if (gamepad2.aWasPressed()) {
+            if (shooterPower <= 0){ return; }
             shooterPower -= 5;
         }
-        if (gamepad2.yWasPressed()) {
+        /*if (gamepad2.yWasPressed()) {
             if (shooterPower >= 100){ return; }
             if (shooterPower == 95) {
                 shooterPower += 5;
                 return;
             }
             shooterPower += 10;
-        }
-        if (gamepad2.bWasPressed()) {
+        }*/
+        if (gamepad2.yWasPressed()) {
             if (shooterPower >= 100){ return; }
             shooterPower += 5;
         }
-        if (gamepad2.aWasPressed()) {
-            if (shooterPower <= 10){ return; }
-            if (shooterPower >= 5) {
+        /*if (gamepad2.aWasPressed()) {
+            if (shooterPower <= 0){ return; }
+            if (shooterPower <= 5) {
                 shooterPower -= 5;
             }
             shooterPower -= 10;
+        }*/
+
+        if (gamepad2.bWasPressed()) {
+            shooterPower = 40;
+        }
+        if (gamepad2.xWasPressed()) {
+            shooterPower = 45;
         }
     }
 
@@ -212,8 +232,19 @@ public class DefaultTeleop extends LinearOpMode {
         fieldSidePositions.put(20,"blue");
         fieldSidePositions.put(24,"red");
 
-        // Create the AprilTag processor the easy way.
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+        // Create the AprilTag processor the hard way.
+        aprilTag = new AprilTagProcessor.Builder()
+                .setLensIntrinsics(1,2,3,4)
+                .build();
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        builder.setCameraResolution(new Size(CAMERA_RES_WIDTH,CAMERA_RES_HEIGHT));
+        builder.enableLiveView(true);
+
+
+        builder.addProcessor(aprilTag);
 
         // Create the vision portal the easy way.
         // if (USE_WEBCAM) {
@@ -294,6 +325,11 @@ public class DefaultTeleop extends LinearOpMode {
         backLeftDrive.setPower(backLeftPower);
         frontRightDrive.setPower(frontRightPower);
         backRightDrive.setPower(backRightPower);
+    }
+    public void fieldOrientationLoop() {
+        if (gamepad1.xWasPressed()) {
+            imu.resetYaw();
+        }
     }
 
     public void autoDriveSetup() {
@@ -540,9 +576,10 @@ public class DefaultTeleop extends LinearOpMode {
         }
 
         if (showShooterTelemetry) {
-            telemetry.addData("left Shooter power", shooter1.getPower());
-            telemetry.addData("right Shooter power", shooter2.getPower());
-            telemetry.addData("motor shooterPower", shooterPower);
+            telemetry.addData("left Shooter Velocity", shooter1.getVelocity());
+            telemetry.addData("right Shooter Velocity", shooter2.getVelocity());
+            telemetry.addData("shooter Power variable", shooterPower);
+            telemetry.addData("shooter TPS (Supposed velocity)", shooterPower*SHOOTER_TICKS_PER_REV);
         }
 
         if (showColorTelemetry) {

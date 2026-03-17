@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import android.annotation.SuppressLint;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -31,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Autonomous(name="Mode Autonome Sec 2 27402")
-public class DefaultAutonomous extends LinearOpMode {
+@Autonomous(name="Mode Autonome Reculer")
+public class RunBackward extends LinearOpMode {
     boolean showImuTelemetry = false;
     boolean showShooterTelemetry = false;
     boolean showColorTelemetry = false;
@@ -93,9 +88,14 @@ public class DefaultAutonomous extends LinearOpMode {
     static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-    static final String[] possiblePaths = {"avancer", "reculer","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
+
+    static final double     SHOOTER_P              = 90;
+    static final double     SHOOTER_I              = 1.95;
+    static final double     SHOOTER_D              = 0.1;
+    static final double     SHOOTER_F              = 0;
+    static final String[] possiblePaths = {"reculer","avancer","practice","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
     int currentPath = 0;
-    int inchValue = 12;
+    double inchValue = 6.3;
 
     public void runOpMode() {
 
@@ -110,30 +110,34 @@ public class DefaultAutonomous extends LinearOpMode {
         telemetryInit();
         runtime.reset();
 
+        earlyTelemetryLoop();
+
+        if (gamepad1.yWasPressed()) {
+            if (currentPath < possiblePaths.length - 1) {
+                currentPath += 1;
+            } else {
+                currentPath = 0;
+            }
+        }
+        else if (gamepad1.xWasPressed())
+        {
+
+        }
+        if (gamepad1.aWasPressed()) {
+            inchValue += 4;
+        }
+        else if (gamepad1.bWasPressed()) {
+            if (!(inchValue == 0)) {
+                inchValue -= 4;
+            }
+        }
+
         waitForStart();
 
-
+        runPath(possiblePaths[currentPath]);
 
         while (opModeIsActive()) {
-            if (gamepad1.yWasPressed()) {
-                if (currentPath < possiblePaths.length - 1) {
-                    currentPath += 1;
-                } else {
-                    currentPath = 0;
-                }
-            }
-            else if (gamepad1.xWasPressed())
-            {
-                runPath(possiblePaths[currentPath]);
-            }
-            if (gamepad1.aWasPressed()) {
-                inchValue += 4;
-            }
-            else if (gamepad1.bWasPressed()) {
-                if (!(inchValue == 0)) {
-                    inchValue -= 4;
-                }
-            }
+
             telemetryLoop();
         }
 
@@ -168,7 +172,7 @@ public class DefaultAutonomous extends LinearOpMode {
         // Create the vision portal the easy way.
         // if (USE_WEBCAM) {
         visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
 
     }
 
@@ -177,7 +181,7 @@ public class DefaultAutonomous extends LinearOpMode {
             if (detection.metadata != null) {
                 if (detection.metadata.name.contains("Obelisk")) {
                     obelisk = obeliskPositions.get(detection.id);
-                 } else {
+                } else {
                     fieldSide = fieldSidePositions.get(detection.id);
 
                     // [TODO] Try figuring this out with detection.ftcPose.x and the crabeBoucleDrive() function like Thierry said
@@ -239,11 +243,10 @@ public class DefaultAutonomous extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        // backRightDrive.setDirection(DcMotor.Direction.REVERSE); // Reverse because of 3 gears ??????
-
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -338,8 +341,8 @@ public class DefaultAutonomous extends LinearOpMode {
         }
     }
     public void boucleDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
+                            double leftInches, double rightInches,
+                            double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
 
@@ -353,7 +356,7 @@ public class DefaultAutonomous extends LinearOpMode {
             backLeftDrive.setTargetPosition(newLeftTarget);
             frontLeftDrive.setTargetPosition(newLeftTarget);
 
-            backRightDrive.setTargetPosition(-newRightTarget);
+            backRightDrive.setTargetPosition(newRightTarget);
             frontRightDrive.setTargetPosition(newRightTarget);
 
             // Turn On RUN_TO_POSITION
@@ -411,7 +414,7 @@ public class DefaultAutonomous extends LinearOpMode {
     }
 
     public void boucleDriveCrabe(double speed,
-                            double leftInches, double rightInches, double timeoutS) {
+                                 double leftInches, double rightInches, double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
 
@@ -516,7 +519,10 @@ public class DefaultAutonomous extends LinearOpMode {
         } else if (Objects.equals(path,"crabeRIGHT")) {
             boucleDriveCrabe(DRIVE_SPEED, -inchValue, inchValue, 5.0);
         } else if (Objects.equals(path, "richel")) {
-
+            boucleDrive(DRIVE_SPEED, 77.5, 77.5, 0.5);
+            boucleDrive(TURN_SPEED, 12, -12, 0.5);
+        } else if (Objects.equals(path, "practice")) {
+            boucleDrive(DRIVE_SPEED, -6.3, -6.3, 0.5);
         }
         telemetry.addData("Path", "Complete " + path);
         telemetry.update();
@@ -619,6 +625,18 @@ public class DefaultAutonomous extends LinearOpMode {
             telemetry.addData("Goober power", goober.getPower());
 
         }
+
+        telemetry.addLine("Press Y to switch modes");
+        telemetry.addLine("Press Play to start modes");
+
+        telemetry.update();
+    }
+
+    public void earlyTelemetryLoop() {
+        telemetry.addData("status", "runtime: " + runtime);
+        telemetry.addData("current path id", currentPath);
+        telemetry.addData("current path", possiblePaths[currentPath]);
+        telemetry.addData("inches", inchValue);
 
         telemetry.update();
     }
