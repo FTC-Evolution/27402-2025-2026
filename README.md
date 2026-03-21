@@ -2,6 +2,14 @@
 
 This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
 
+## Todo
+- [ ] Turn everything into classes
+	* e.g. if we want to interface with something it becomes its own class
+		* for example we have a shooter class a drive class a goober class etc.
+	* autonomous mode and teleop mode should have a shared BaseOpMode class with common functions and constants
+- [ ] Actual working and tested autonomous modes
+- [ ] Send the code on laptop to Github
+
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
