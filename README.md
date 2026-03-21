@@ -2,7 +2,7 @@
 
 This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
 
-## Todo
+## Todo
 - [ ] Turn everything into classes
 	* e.g. if we want to interface with something it becomes its own class
 		* for example we have a shooter class a drive class a goober class etc.
