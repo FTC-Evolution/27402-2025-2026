@@ -79,6 +79,10 @@ public class BaseOpMode extends LinearOpMode {
     protected Map<Integer, String> obeliskPositions;
     protected Map<Integer, String> fieldSidePositions;
 
+    public double degreesToInches(double degrees) {
+        return (degrees / 360) * INCHES_PER_DEGREE;
+    }
+
 
     @Override
     public void runOpMode(){

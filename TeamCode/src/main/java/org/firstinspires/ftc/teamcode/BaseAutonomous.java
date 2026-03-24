@@ -15,9 +15,9 @@ public class BaseAutonomous extends BaseOpMode {
     int currentPath = 0;
     protected double inchValue = 6.3;
 
-    public double degreesToInches(double degrees) {
-        return (degrees / 360) * INCHES_PER_DEGREE;
-    }
+    protected boolean LOOP_AUTONOMOUS = false;
+
+
     public void Init() {
 
     }
