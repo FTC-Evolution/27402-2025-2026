@@ -28,6 +28,10 @@ public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
+    public void setAutonomousAsLooping() {
+        LOOP_AUTONOMOUS = false;
+    }
+
     @Override
     public void runOpMode() {
 
@@ -62,7 +66,11 @@ public class BaseAutonomous extends BaseOpMode {
 
         waitForStart();
 
-        Run();
+        do {
+            Run();
+        }
+        while (LOOP_AUTONOMOUS && opModeIsActive());
+
         sleep(1000);
 
         while (opModeIsActive()) {
