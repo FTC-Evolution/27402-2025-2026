@@ -66,20 +66,6 @@ public class BaseAutonomous extends BaseOpMode {
         while (LOOP_AUTONOMOUS && opModeIsActive());
 
         sleep(1000);
-
-        while (opModeIsActive()) {
-            telemetryLoop();
-        }
-
-        // buttonLoop();
-        // boucleDrive();
-        // aimLoop();
-        // shooterLoop();
-        // gooberLoop();
-        //aprilTagLoop();
-        //colorSensorLoop();
-
-
     }
 
     @Override
@@ -261,80 +247,6 @@ public class BaseAutonomous extends BaseOpMode {
         telemetry.addData("Shooters desired velocity",  shooterTPS);
         telemetry.addData("Shooter1 velocity", shooter1.getVelocity());
         telemetry.addData("Shooter2 velocity" ,shooter2.getVelocity());
-        telemetry.update();
-    }
-
-    public void boucleShoot(double speed, double timeoutS){
-        shooterTPS = speed * SHOOTER_TICKS_PER_REV;
-        shooter1.setVelocity(shooterTPS);
-        shooter2.setVelocity(shooterTPS);
-        while (opModeIsActive() &&
-                (runtime.seconds() < timeoutS)) {
-            // Display it for the drivers
-            telemetry.addData("Shooter desired turns per second", shooterPower);
-            telemetry.addData("Shooters desired velocity",  shooterTPS);
-            telemetry.addData("Shooter1 velocity", shooter1.getVelocity());
-            telemetry.addData("Shooter2 velocity" ,shooter2.getVelocity());
-            telemetry.update();
-        }
-
-        // Stop all motion;
-        shooter1.setPower(0);
-        shooter2.setPower(0);
-
-        sleep(250);   // optional pause after each move.
-    }
-
-    public void telemetryLoop(){
-
-        telemetry.addData("status", "runtime: " + runtime);
-
-
-        if (showImuTelemetry) {
-            telemetry.addData("yaw", imu.getRobotYawPitchRollAngles().getYaw(angle));
-            telemetry.addData("pitch", imu.getRobotYawPitchRollAngles().getPitch(angle));
-            telemetry.addData("roll", imu.getRobotYawPitchRollAngles().getRoll(angle));
-
-            telemetry.addData("angular velocity x", imu.getRobotAngularVelocity(angle).xRotationRate);
-            telemetry.addData("angular velocity y", imu.getRobotAngularVelocity(angle).yRotationRate);
-            telemetry.addData("angular velocity z", imu.getRobotAngularVelocity(angle).zRotationRate);
-        }
-
-
-        if (showColorTelemetry) {
-            NormalizedRGBA colors = sensor.getNormalizedColors();
-            int colorCode = colors.toColor();
-            String ballColor = "";
-
-            telemetry.addData("Hue", JavaUtil.colorToHue(colorCode));
-            telemetry.addData("Saturation", "%.3f", JavaUtil.colorToSaturation(colorCode));
-            telemetry.addData("Value", "%.3f", JavaUtil.colorToValue(colorCode));
-            telemetry.addData("Color", JavaUtil.colorToText(colorCode));
-
-            telemetry.addData("Alpha", "%.3f", colors.alpha);
-
-            telemetry.addData("Light level", "%.3f", ((OpticalDistanceSensor) sensor).getLightDetected());
-
-            if ((JavaUtil.colorToHue(colorCode) >= 200) && (JavaUtil.colorToHue(colorCode) <= 300)) {
-                ballColor = "purple";
-            }
-            else if ((JavaUtil.colorToHue(colorCode) >= 30) && (JavaUtil.colorToHue(colorCode) <= 199)) {
-                ballColor = "green";
-            } else {
-                ballColor = "unknown";
-            }
-
-            telemetry.addData("Ball color", ballColor);
-        }
-
-        if (showGooberTelemetry) {
-            telemetry.addData("Goober power", goober.getPower());
-
-        }
-
-        telemetry.addLine("Press Y to switch modes");
-        telemetry.addLine("Press Play to start modes");
-
         telemetry.update();
     }
 
