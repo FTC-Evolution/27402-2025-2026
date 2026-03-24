@@ -49,12 +49,6 @@ public class BaseAutonomous extends BaseOpMode {
 
         autoTelemetryLoop();
 
-        if (gamepad1.yWasPressed()) {
-            if (currentPath < possiblePaths.length - 1) {
-                currentPath += 1;
-            } else {
-                currentPath = 0;
-            }}
         if (gamepad1.aWasPressed()) {
             inchValue += 4;
         }
