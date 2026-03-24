@@ -132,7 +132,7 @@ public class BaseOpMode extends LinearOpMode {
         // Create the vision portal the easy way.
         // if (USE_WEBCAM) {
         visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "webcam"), aprilTag);
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
 
     }
 
@@ -195,7 +195,7 @@ public class BaseOpMode extends LinearOpMode {
             frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             // Send telemetry message to indicate successful Encoder reset
-            telemetry.addData("Starting hat",  "%7d :%7d :%7d :%7d",
+            telemetry.addData("Starting hat",  "%7d :%7d",
                     backLeftDrive.getCurrentPosition(),
                     backRightDrive.getCurrentPosition());
             telemetry.update();

@@ -22,6 +22,7 @@ public class BaseTeleop extends BaseOpMode {
         gooberInit();
         // colorSensorInit();
         telemetryInit();
+        imuInit();
 
         waitForStart();
         runtime.reset();

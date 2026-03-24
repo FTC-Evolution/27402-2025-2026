@@ -41,6 +41,7 @@ public class BaseAutonomous extends BaseOpMode {
         shooterInit();
         // aimInit();
         gooberInit();
+        imuInit();
         cameraInit();
         //colorSensorInit();
         telemetryInit();
