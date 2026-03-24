@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @TeleOp(name="Test de la camera USB GoBILDA")
+@Disabled
 
 public class TestWebcam extends LinearOpMode {
 
