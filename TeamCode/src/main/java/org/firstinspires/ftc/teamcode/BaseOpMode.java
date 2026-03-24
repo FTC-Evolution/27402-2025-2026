@@ -222,7 +222,7 @@ public class BaseOpMode extends LinearOpMode {
             if (shooterPower <= 0) {
                 return;
             }
-            shooterPower -= 5;
+            shooterPower -= 1;
         }
         /*if (gamepad2.yWasPressed()) {
             if (shooterPower >= 100){ return; }
@@ -236,7 +236,7 @@ public class BaseOpMode extends LinearOpMode {
             if (shooterPower >= 100) {
                 return;
             }
-            shooterPower += 5;
+            shooterPower += 1;
         }
         /*if (gamepad2.aWasPressed()) {
             if (shooterPower <= 0){ return; }
