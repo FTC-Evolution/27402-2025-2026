@@ -250,7 +250,7 @@ public class BaseOpMode extends LinearOpMode {
             shooterPower = 40;
         }
         if (gamepad2.xWasPressed()) {
-            shooterPower = 45;
+            shooterPower = 42;
         }
     }
 
