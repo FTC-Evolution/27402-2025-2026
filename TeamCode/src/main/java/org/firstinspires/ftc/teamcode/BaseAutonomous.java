@@ -94,6 +94,24 @@ public class BaseAutonomous extends BaseOpMode {
         }
     }
 
+    @Override
+    public void autoDriveInitOverride() {
+        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // Send telemetry message to indicate successful Encoder reset
+        telemetry.addData("Starting hat",  "%7d :%7d",
+                backLeftDrive.getCurrentPosition(),
+                backRightDrive.getCurrentPosition());
+        telemetry.update();
+    }
+
     public void drive(double speed,
                       double leftInches, double rightInches,
                       double timeoutS) {

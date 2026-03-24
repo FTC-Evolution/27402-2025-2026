@@ -68,8 +68,6 @@ public class BaseOpMode extends LinearOpMode {
     public static final int        CAMERA_RES_WIDTH       = 640;
     public static final int        CAMERA_RES_HEIGHT      = 480;
 
-    boolean TELEOP = false;
-
     protected double shooterPower = 40; // Perfect speed to throw the ball when at the point of the launch triangle on the field
     protected double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
@@ -184,22 +182,11 @@ public class BaseOpMode extends LinearOpMode {
         frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        if (!TELEOP) {
-            backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        autoDriveInitOverride();
+    }
 
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            // Send telemetry message to indicate successful Encoder reset
-            telemetry.addData("Starting hat",  "%7d :%7d",
-                    backLeftDrive.getCurrentPosition(),
-                    backRightDrive.getCurrentPosition());
-            telemetry.update();
-        }
+    public void autoDriveInitOverride() {
+
     }
 
     public void telemetryInit(){
@@ -301,11 +288,9 @@ public class BaseOpMode extends LinearOpMode {
     public void telemetryLoop(){
 
         telemetry.addData("status", "runtime: " + runtime);
-        if (!TELEOP) {
-            autoTelemetryLoop();
-        }
+        autoTelemetryLoop();
 
-        if (showCameraTelemetry && !TELEOP) {
+        if (showCameraTelemetry) {
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             telemetry.addData("number of apriltags", currentDetections.size());
 
