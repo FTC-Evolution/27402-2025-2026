@@ -37,7 +37,6 @@ public class BaseAutonomous extends BaseOpMode {
 
         Init();
 
-
         driveInit();
         shooterInit();
         // aimInit();
