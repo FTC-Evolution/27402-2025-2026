@@ -2,6 +2,8 @@
 
 ### 27402 FTC Code
 
+![EvolutionFTC](https://github.com/FTC-Evolution/27402-2025-2026/blob/main/assets/icon_128.png?raw=true)
+
 **The FTC TeamCode for Team 27402**
 
 *Decode 2025-2026*
