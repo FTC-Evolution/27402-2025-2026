@@ -29,9 +29,9 @@ The FTC TeamCode for team 27402 is the code that controls our robot. It contains
 
 ## Dependencies
 
-- [Android Studio](#) 2024.2 or later
-- [Java](#)
-- [Gradle](#)
+- [Android Studio](https://developer.android.com/studio) **2024.2** or later
+- [Java](https://www.oracle.com/java/technologies/downloads/) **17** or later
+- [Gradle](https://gradle.org/release) **8.9** or later
 
 ## Building
 
