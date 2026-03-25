@@ -1,6 +1,6 @@
 <div align="center">
 
-### 27402 FTC Code
+### FTC 27402 Evolution
 
 ![EvolutionFTC](https://github.com/FTC-Evolution/27402-2025-2026/blob/main/assets/icon_128.png?raw=true)
 
