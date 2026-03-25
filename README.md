@@ -1,8 +1,22 @@
-## NOTICE
+<div align="center">
 
-This repository contains the public FTC SDK for the DECODE (2025-2026) competition season.
+### 27402 FTC Code
 
-## Todo
+**The FTC TeamCode for Team 27402**
+
+*Decode 2025-2026*
+
+![Commit Activity](https://img.shields.io/github/commit-activity/m/FTC-Evolution/27402-2025-2026?style=flat)
+![CI](https://img.shields.io/github/actions/workflow/status/FTC-Evolution/27402-2025-2026/android.yml?label=CI&style=flat)
+![Stars](https://img.shields.io/github/stars/FTC-Evolution/27402-2025-2026?style=flat)
+
+[Installation](#Requirements) · [Roadmap](#Roadmap) · [Structure](#Enhancements)
+
+</div>
+
+---
+
+## Roadmap
 - [ ] Turn everything into classes
 	* e.g. if we want to interface with something it becomes its own class
 		* for example we have a shooter class a drive class a goober class etc.
