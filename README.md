@@ -22,8 +22,11 @@ The FTC TeamCode for team 27402 is the code that controls our robot. It contains
 ### Key Features
 
 - ❓ **Hmm..** - That's a great question
-- 📈 **MeepMeep** - MeepMeep a robot simulation tool, is already built-in with the Decode field.
-- 
+- 📈 **MeepMeep** - the MeepMeep robot simulation tool, is already built-in with the Decode field
+- 🤖 **Autonomous** - Autonomous modes built in into classes, the classes are already separated by default
+- 👽 **Ergonomic** - Teleop mode that is easy to understand and use
+- 🤡 **NOT Modular** - This is **NOT** modular yet!
+
 ## Dependencies
 
 - [Android Studio](#) 2024.2 or later
