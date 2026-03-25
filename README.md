@@ -12,7 +12,7 @@
 ![CI](https://img.shields.io/github/actions/workflow/status/FTC-Evolution/27402-2025-2026/android.yml?label=CI&style=flat)
 ![Stars](https://img.shields.io/github/stars/FTC-Evolution/27402-2025-2026?style=flat)
 
-[Installation](#Building) · [Roadmap](#Roadmap)
+[Installation](#Building) • [Roadmap](#Roadmap)
 
 </div>
 
