@@ -62,5 +62,6 @@ You can install with the play/restart debug icon.
 	* e.g. if we want to interface with something it becomes its own class
 		* for example we have a shooter class a drive class a goober class etc.
 - [ ] Actual working and tested autonomous modes
+- [ ] ***M O D U L A R I Z A T I O N***
 ### TODO
 - None yet!
