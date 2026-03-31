@@ -12,6 +12,9 @@ public class BaseTeleop extends BaseOpMode {
     double counter1 = 0;
     double counter2 = 0;
     boolean end = false;
+
+    double DRIVE_STICK_DEADZONE = 0.1;
+
     String winner = "none";
 
     @Override
@@ -68,6 +71,21 @@ public class BaseTeleop extends BaseOpMode {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
+
+
+
+        // i add cool deadzones WOW
+        if (Math.abs(y) < DRIVE_STICK_DEADZONE) {
+            y = 0;
+        }
+
+        if (Math.abs(x) < DRIVE_STICK_DEADZONE) {
+            x = 0;
+        }
+
+        if (Math.abs(rx) < DRIVE_STICK_DEADZONE) {
+            rx = 0;
+        }
 
         if (gamepad1.startWasPressed()) {
             imu.resetYaw();
