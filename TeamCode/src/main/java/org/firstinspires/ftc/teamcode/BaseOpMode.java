@@ -17,6 +17,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.interfaces.Brain;
+import org.firstinspires.ftc.teamcode.interfaces.Goober;
+import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -42,10 +45,12 @@ public class BaseOpMode extends LinearOpMode {
     protected DcMotor frontRightDrive;
     protected DcMotor backLeftDrive;
     protected DcMotor backRightDrive;
-    protected DcMotorEx shooter1;
-    protected DcMotorEx shooter2;
-    protected DcMotor goober;
-    protected DcMotor goober2;
+
+    Goober goober;
+
+    Shooter shooter;
+
+    Brain brain;
     protected NormalizedColorSensor sensor;
 
     protected final double SHOOTER_TICKS_PER_REV = 28;
@@ -60,15 +65,14 @@ public class BaseOpMode extends LinearOpMode {
     static final double     APRILTAG_TOLERANCE_ANGLE= 5;
     static final double     APRILTAG_TOLERANCE_SIDE = 8;
 
-    static final double     SHOOTER_P              = 90;
-    static final double     SHOOTER_I              = 1.95;
-    static final double     SHOOTER_D              = 0.1;
-    static final double     SHOOTER_F              = 0;
+
 
     public static final int        CAMERA_RES_WIDTH       = 640;
     public static final int        CAMERA_RES_HEIGHT      = 480;
 
-    protected double shooterPower = 40; // Perfect speed to throw the ball when at the point of the launch triangle on the field
+    public static final double DEFAULT_SHOOTER_POWER = 40;
+
+    protected double shooterPower = DEFAULT_SHOOTER_POWER; // Perfect speed to throw the ball when at the point of the launch triangle on the field
     protected double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
     protected String obelisk;
@@ -126,27 +130,29 @@ public class BaseOpMode extends LinearOpMode {
 
     public void shooterInit() {
         showShooterTelemetry = true;
-        shooter1 = hardwareMap.get(DcMotorEx.class, "leftshooter");
-        shooter2 = hardwareMap.get(DcMotorEx.class, "rightshooter");
 
-        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooter = new Shooter(
+                hardwareMap.get(DcMotorEx.class, "leftshooter"),
+                hardwareMap.get(DcMotorEx.class, "rightshooter")
+        );
 
-        shooter1.setVelocityPIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F);
-        shooter2.setVelocityPIDFCoefficients(SHOOTER_P, SHOOTER_I, SHOOTER_D, SHOOTER_F);
 
-        // Reset encoders
-        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 
-        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void imuInit() {
+        brain = new Brain(
+                hardwareMap.get(IMU.class, "imu")
+
+        );
     }
 
     public void gooberInit(){
         showGooberTelemetry = true;
-        goober = hardwareMap.get(DcMotorEx.class, "goober");
-        goober2 = hardwareMap.get(DcMotorEx.class, "goober2");
+
+        goober = new Goober(
+                hardwareMap.get(DcMotorEx.class, "goober"),
+                hardwareMap.get(DcMotorEx.class, "goober2")
+        );
     }
 
     // TODO Finish BaseOpMode Refactor
@@ -196,8 +202,7 @@ public class BaseOpMode extends LinearOpMode {
     public void shooterLoop() {
         shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
-        shooter1.setVelocity(gamepad2.right_trigger * shooterTPS);
-        shooter2.setVelocity(gamepad2.right_trigger * shooterTPS);
+        shooter.modVelocity(gamepad2.right_trigger * shooterTPS);
 
         if (gamepad2.aWasPressed()) {
             if (shooterPower <= 0) {
@@ -214,7 +219,7 @@ public class BaseOpMode extends LinearOpMode {
             shooterPower += 10;
         }*/
         if (gamepad2.yWasPressed()) {
-            if (shooterPower >= 100) {
+            if (shooterPower >= 2147483647)  { // 32 bit integer limit :P
                 return;
             }
             shooterPower += 1;
@@ -228,7 +233,7 @@ public class BaseOpMode extends LinearOpMode {
         }*/
 
         if (gamepad2.bWasPressed()) {
-            shooterPower = 40;
+            shooterPower = DEFAULT_SHOOTER_POWER;
         }
         if (gamepad2.xWasPressed()) {
             shooterPower = 42;
@@ -239,26 +244,19 @@ public class BaseOpMode extends LinearOpMode {
 
         // Change to Gamepad 1, Gamepad 2 is for testing purposes
         if (gamepad2.left_bumper) {
-            goober.setPower(1);
-            goober2.setPower(-1);
+            goober.modPower(1);
         } else if (gamepad2.right_bumper) {
-            goober.setPower(-1);
-            goober2.setPower(1);
+            goober.modPower(-1);
         } else if (gamepad2.dpad_left) {
-            goober.setPower(1);
-            goober2.setPower(0);
+            goober.modSoloPower(1,"top");
         } else if (gamepad2.dpad_right) {
-            goober.setPower(-1);
-            goober2.setPower(0);
+            goober.modSoloPower(-1,"top");
         } else if (gamepad2.dpad_up) {
-            goober.setPower(0);
-            goober2.setPower(1);
+            goober.modSoloPower(1, "bottom");
         } else if (gamepad2.dpad_down) {
-            goober.setPower(0);
-            goober2.setPower(-1);
+            goober.modSoloPower(-1, "bottom");
         } else {
-            goober.setPower(0);
-            goober2.setPower(0);
+            goober.modPower(0);
         }
 
     }
@@ -307,18 +305,14 @@ public class BaseOpMode extends LinearOpMode {
 
         if (showImuTelemetry) {
             AngleUnit unit = AngleUnit.DEGREES;
-            telemetry.addData("yaw", imu.getRobotYawPitchRollAngles().getYaw(unit));
-            telemetry.addData("pitch", imu.getRobotYawPitchRollAngles().getPitch(unit));
-            telemetry.addData("roll", imu.getRobotYawPitchRollAngles().getRoll(unit));
-
-            telemetry.addData("angular velocity x", imu.getRobotAngularVelocity(unit).xRotationRate);
-            telemetry.addData("angular velocity y", imu.getRobotAngularVelocity(unit).yRotationRate);
-            telemetry.addData("angular velocity z", imu.getRobotAngularVelocity(unit).zRotationRate);
+            telemetry.addData("yaw", brain.getYaw(unit));
+            telemetry.addData("pitch", brain.getPitch(unit));
+            telemetry.addData("roll", brain.getRoll(unit));
         }
 
         if (showShooterTelemetry) {
-            telemetry.addData("left Shooter Velocity", shooter1.getVelocity());
-            telemetry.addData("right Shooter Velocity", shooter2.getVelocity());
+            telemetry.addData("left Shooter Velocity", shooter.getVelocity()[0]);
+            telemetry.addData("right Shooter Velocity", shooter.getVelocity()[1]);
             telemetry.addData("shooter Power variable", shooterPower);
             telemetry.addData("shooter TPS (Supposed velocity)", shooterPower*SHOOTER_TICKS_PER_REV);
         }
