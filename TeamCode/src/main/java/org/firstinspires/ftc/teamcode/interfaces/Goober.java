@@ -5,6 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Goober {
     protected final DcMotor bottomGoober; // goober 2
     protected final DcMotor topGoober;
+
+    public enum Type {
+        TOP,
+        BOTTOM,
+    }
+
     public Goober(DcMotor topGoober, DcMotor bottomGoober) {
         this.bottomGoober = bottomGoober;
         this.topGoober = topGoober;
@@ -15,14 +21,17 @@ public class Goober {
         bottomGoober.setPower(-power);
     }
 
-    public void modSoloPower(double power, String goober) {
+    public void modSoloPower(double power, Type goober) {
         switch (goober) {
-            case "top":
-            topGoober.setPower(power);
-            case "bottom":
-            bottomGoober.setPower(power);
+            case TOP:
+                topGoober.setPower(power);
+                break;
+            case BOTTOM:
+                bottomGoober.setPower(power);
+                break;
             default:
                 this.modPower(power);
+                break;
         }
     }
 

@@ -248,13 +248,13 @@ public class BaseOpMode extends LinearOpMode {
         } else if (gamepad2.right_bumper) {
             goober.modPower(-1);
         } else if (gamepad2.dpad_left) {
-            goober.modSoloPower(1,"top");
+            goober.modSoloPower(1, Goober.Type.TOP);
         } else if (gamepad2.dpad_right) {
-            goober.modSoloPower(-1,"top");
+            goober.modSoloPower(-1,Goober.Type.TOP);
         } else if (gamepad2.dpad_up) {
-            goober.modSoloPower(1, "bottom");
+            goober.modSoloPower(1, Goober.Type.BOTTOM);
         } else if (gamepad2.dpad_down) {
-            goober.modSoloPower(-1, "bottom");
+            goober.modSoloPower(-1, Goober.Type.BOTTOM);
         } else {
             goober.modPower(0);
         }
