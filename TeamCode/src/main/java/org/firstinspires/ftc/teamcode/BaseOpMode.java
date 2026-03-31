@@ -37,7 +37,7 @@ public class BaseOpMode extends LinearOpMode {
     protected AprilTagProcessor aprilTag;
     protected VisionPortal visionPortal;
 
-    protected IMU imu;
+
     protected DcMotor frontLeftDrive;
     protected DcMotor frontRightDrive;
     protected DcMotor backLeftDrive;
@@ -87,17 +87,7 @@ public class BaseOpMode extends LinearOpMode {
 
     }
 
-    public void imuInit(){
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        IMU.Parameters params = new IMU.Parameters(orientationOnRobot);
-
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(params);
-        imu.resetYaw();
-    }
 
 
     public void cameraInit() {
