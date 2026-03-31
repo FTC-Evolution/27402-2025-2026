@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 public class Brain extends LinearOpMode {
     public static IMU imu;
-    public void Init(){
+    public static void Init(){
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
