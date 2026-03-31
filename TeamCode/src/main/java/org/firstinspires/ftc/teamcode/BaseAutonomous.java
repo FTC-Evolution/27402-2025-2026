@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.interfaces.Brain;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 public class BaseAutonomous extends BaseOpMode {
@@ -41,7 +42,6 @@ public class BaseAutonomous extends BaseOpMode {
         shooterInit();
         // aimInit();
         gooberInit();
-        imuInit();
         cameraInit();
         //colorSensorInit();
         telemetryInit();
@@ -258,13 +258,12 @@ public class BaseAutonomous extends BaseOpMode {
     }
     public void modShooter(double speed) {
         shooterTPS = speed * SHOOTER_TICKS_PER_REV;
-        shooter1.setVelocity(shooterTPS);
-        shooter2.setVelocity(shooterTPS);
+        shooter.modVelocity(shooterTPS);
 
         telemetry.addData("Shooter desired turns per second", shooterPower);
         telemetry.addData("Shooters desired velocity",  shooterTPS);
-        telemetry.addData("Shooter1 velocity", shooter1.getVelocity());
-        telemetry.addData("Shooter2 velocity" ,shooter2.getVelocity());
+        telemetry.addData("Shooter1 velocity", shooter.getVelocity()[0]);
+        telemetry.addData("Shooter2 velocity" ,shooter.getVelocity()[1]);
         telemetry.update();
     }
 

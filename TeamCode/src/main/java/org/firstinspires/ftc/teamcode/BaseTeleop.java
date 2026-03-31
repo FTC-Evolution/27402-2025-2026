@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.interfaces.Brain.imu;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.interfaces.Brain;
+import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @TeleOp(name="Teleop 27402 Sec 2")
@@ -23,12 +22,13 @@ public class BaseTeleop extends BaseOpMode {
     @Override
     public void runOpMode() {
 
+
         driveInit();
         shooterInit();
         gooberInit();
         // colorSensorInit();
         telemetryInit();
-        Brain.Init();
+        imuInit();
 
         waitForStart();
         runtime.reset();
@@ -91,10 +91,10 @@ public class BaseTeleop extends BaseOpMode {
         }
 
         if (gamepad1.startWasPressed()) {
-            imu.resetYaw();
+            brain.resetYaw();
         }
 
-        double botDirection = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botDirection = brain.getYaw(AngleUnit.RADIANS);
 
         double rotX = x * Math.cos(-botDirection) - y * Math.sin(-botDirection);
         double rotY = x * Math.sin(-botDirection) + y * Math.cos(-botDirection);
@@ -118,7 +118,7 @@ public class BaseTeleop extends BaseOpMode {
 
     public void fieldOrientationLoop() {
         if (gamepad1.xWasPressed()) {
-            imu.resetYaw();
+            brain.resetYaw();
         }
     }
 
