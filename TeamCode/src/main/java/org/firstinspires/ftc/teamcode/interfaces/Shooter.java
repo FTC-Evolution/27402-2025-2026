@@ -12,6 +12,7 @@ public class Shooter {
     static final double     SHOOTER_I              = 1.95;
     static final double     SHOOTER_D              = 0.1;
     static final double     SHOOTER_F              = 0;
+    static final double     SHOOTER_TICKS_PER_REV  = 28;
 
     public Shooter(DcMotorEx shooter1, DcMotorEx shooter2) {
         this.shooter1 = shooter1;
@@ -47,5 +48,9 @@ public class Shooter {
 
     public double[] getVelocity() {
         return new double[]{shooter1.getVelocity(), shooter2.getVelocity()};
+    }
+
+    public double speed(double speed) {
+        return speed * SHOOTER_TICKS_PER_REV;
     }
 }
