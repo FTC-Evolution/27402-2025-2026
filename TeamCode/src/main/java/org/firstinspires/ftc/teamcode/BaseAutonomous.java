@@ -256,17 +256,6 @@ public class BaseAutonomous extends BaseOpMode {
             sleep(250);   // optional pause after each move.
         }
     }
-    public void modShooter(double speed) {
-        shooterTPS = speed * SHOOTER_TICKS_PER_REV;
-        shooter.modVelocity(shooterTPS);
-
-        telemetry.addData("Shooter desired turns per second", shooterPower);
-        telemetry.addData("Shooters desired velocity",  shooterTPS);
-        telemetry.addData("Shooter1 velocity", shooter.getVelocity()[0]);
-        telemetry.addData("Shooter2 velocity" ,shooter.getVelocity()[1]);
-        telemetry.update();
-    }
-
     @Override
     public void autoTelemetryLoop() {
         telemetry.addData("status", "runtime: " + runtime);

@@ -9,6 +9,12 @@ public class PetitTriangleBleu extends BaseAutonomous {
     public void Run() {
         driveCrabe(DRIVE_SPEED, -72, 72, 5.0);
         drive(TURN_SPEED, degreesToInches(45), -degreesToInches(45), 5.0);
-        modShooter(40);
+        shooter.modVelocity(shooter.speed(40));
+        sleep(500);
+        goober.modPower(1);
+        sleep(850);
+        goober.modPower(0);
+        sleep(500);
+        shooter.modVelocity(0);
     }
 }

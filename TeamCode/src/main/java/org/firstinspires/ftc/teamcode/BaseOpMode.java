@@ -46,9 +46,9 @@ public class BaseOpMode extends LinearOpMode {
     protected DcMotor backLeftDrive;
     protected DcMotor backRightDrive;
 
-    Goober goober;
+    protected Goober goober;
 
-    Shooter shooter;
+    protected Shooter shooter;
 
     Brain brain;
     protected NormalizedColorSensor sensor;
