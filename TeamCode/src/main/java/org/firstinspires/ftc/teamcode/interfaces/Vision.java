@@ -27,6 +27,7 @@ public class Vision {
     public static final double        CAMERA_PITCH           = -80;
     public static final double        CAMERA_ROLL            = 10;
 
+    public static final double     APRILTAG_TOLERANCE_DISTANCE = 3;
     public static final double     APRILTAG_TOLERANCE_ANGLE= 5;
     public static final double     APRILTAG_TOLERANCE_SIDE = 8;
 
@@ -81,14 +82,13 @@ public class Vision {
         return aprilTagProcessor.getDetections();
     }
 
-    public void updateAprilTags() {
+    public void updateGoalAprilTag() {
         for (AprilTagDetection detection : aprilTagProcessor.getDetections()) {
             if (detection.metadata != null) {
-                if (detection.metadata.name.contains("Obelisk")) {
-                    obeliskName = obeliskPositions.get(detection.id);
-                } else {
+                if (detection.id == 20 || detection.id == 24) { // GOAL april ids
                     fieldGoalName = fieldSidePositions.get(detection.id);
                     lastSeenGoal = detection;
+                    break;
                 }
             }
         }
@@ -98,6 +98,10 @@ public class Vision {
         if (lastSeenGoal != null) {
             return lastSeenGoal.ftcPose.range;
         } else { return -1.0; }
+    }
+
+    public double absoluteFieldGoalDistance() {
+        return Math.abs(getFieldGoalDistance());
     }
 
     public double getFieldGoalSideDistance() {
@@ -116,5 +120,17 @@ public class Vision {
         if (lastSeenGoal != null) {
             return lastSeenGoal.ftcPose.yaw;
         } else { return -1.0; }
+    }
+
+    public double getRangeError(double target_distance) {
+        return absoluteFieldGoalDistance() - target_distance;
+    }
+
+    public double getHeadingError() {
+        return getFieldGoalBearing();
+    }
+
+    public double getYawError() {
+        return getFieldGoalYaw();
     }
 }
