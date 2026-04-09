@@ -14,6 +14,8 @@ public class Shooter {
     static final double     SHOOTER_F              = 0;
     static final double     SHOOTER_TICKS_PER_REV  = 28;
 
+    public static final double DEFAULT_SHOOTER_POWER = 34;
+
     public Shooter(DcMotorEx shooter1, DcMotorEx shooter2) {
         this.shooter1 = shooter1;
         this.shooter2 = shooter2;
