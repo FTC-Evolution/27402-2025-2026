@@ -68,9 +68,9 @@ public class BaseAutonomous extends BaseOpMode {
         sleep(1000);
     }
 
-    @Override
+    /*@Override
     public void aprilTagLoop(){
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
+        for (AprilTagDetection detection : vision.getDetections()) {
             if (detection.metadata != null) {
                 if (detection.metadata.name.contains("Obelisk")) {
                     obelisk = obeliskPositions.get(detection.id);
@@ -91,8 +91,9 @@ public class BaseAutonomous extends BaseOpMode {
 
             }
 
+            drive(DRIVE_SPEED, -1000, -1000, 1000.0);
         }
-    }
+    }*/
 
     @Override
     public void autoDriveInitOverride() {

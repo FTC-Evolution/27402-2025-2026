@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.interfaces.Brain;
 import org.firstinspires.ftc.teamcode.interfaces.Shooter;
+import org.firstinspires.ftc.teamcode.interfaces.Vision;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @TeleOp(name="Teleop 27402 Sec 2")
@@ -26,6 +27,7 @@ public class BaseTeleop extends BaseOpMode {
         driveInit();
         shooterInit();
         gooberInit();
+        cameraInit();
         // colorSensorInit();
         telemetryInit();
         imuInit();
@@ -46,9 +48,9 @@ public class BaseTeleop extends BaseOpMode {
 
     }
 
-    @Override
+    /*@Override
     public void aprilTagLoop() {
-        for (AprilTagDetection detection : aprilTag.getDetections()) {
+        for (AprilTagDetection detection : vision.getDetections()) {
             if (detection.metadata != null) {
                 if (detection.metadata.name.contains("Obelisk")) {
                     obelisk = obeliskPositions.get(detection.id);
@@ -56,7 +58,7 @@ public class BaseTeleop extends BaseOpMode {
                     fieldSide = fieldSidePositions.get(detection.id);
 
                     if (gamepad1.leftBumperWasPressed()) {
-                        if (Math.abs(detection.ftcPose.x) > APRILTAG_TOLERANCE_SIDE) ;
+                        if (Math.abs(detection.ftcPose.x) > Vision.APRILTAG_TOLERANCE_SIDE) ;
                         {
                             autoDriveCrabe(DRIVE_SPEED, detection.ftcPose.x, -detection.ftcPose.x, 5.0);
                         }
@@ -68,7 +70,7 @@ public class BaseTeleop extends BaseOpMode {
             }
 
         }
-    }
+    }*/
 
     public void driveLoop() {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed

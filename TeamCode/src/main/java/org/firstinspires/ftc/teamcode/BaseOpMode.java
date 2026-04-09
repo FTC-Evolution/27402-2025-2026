@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.interfaces.Brain;
 import org.firstinspires.ftc.teamcode.interfaces.Goober;
 import org.firstinspires.ftc.teamcode.interfaces.Shooter;
+import org.firstinspires.ftc.teamcode.interfaces.Vision;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -50,6 +51,8 @@ public class BaseOpMode extends LinearOpMode {
 
     protected Shooter shooter;
 
+    protected Vision vision;
+
     Brain brain;
     protected NormalizedColorSensor sensor;
 
@@ -62,24 +65,15 @@ public class BaseOpMode extends LinearOpMode {
     protected static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
     protected static final double     DRIVE_SPEED             = 0.6;
     protected static final double     TURN_SPEED              = 0.5;
-    static final double     APRILTAG_TOLERANCE_ANGLE= 5;
-    static final double     APRILTAG_TOLERANCE_SIDE = 8;
 
 
 
-    public static final int        CAMERA_RES_WIDTH       = 640;
-    public static final int        CAMERA_RES_HEIGHT      = 480;
+
 
     public static final double DEFAULT_SHOOTER_POWER = 40;
 
     protected double shooterPower = DEFAULT_SHOOTER_POWER; // Perfect speed to throw the ball when at the point of the launch triangle on the field
     protected double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
-
-    protected String obelisk;
-    protected String fieldSide;
-
-    protected Map<Integer, String> obeliskPositions;
-    protected Map<Integer, String> fieldSidePositions;
 
     public double degreesToInches(double degrees) {
         return (degrees / 360) * INCHES_PER_DEGREE;
@@ -95,37 +89,8 @@ public class BaseOpMode extends LinearOpMode {
 
 
     public void cameraInit() {
-
+        vision = new Vision(hardwareMap.get(WebcamName.class, "Webcam 1"));
         showCameraTelemetry = true;
-
-        obeliskPositions = new HashMap<Integer, String>();
-        obeliskPositions.put(21,"GPP");
-        obeliskPositions.put(22,"PGP");
-        obeliskPositions.put(23,"PPG");
-
-
-        fieldSidePositions = new HashMap<Integer, String>();
-        fieldSidePositions.put(20,"blue");
-        fieldSidePositions.put(24,"red");
-
-        aprilTag = new AprilTagProcessor.Builder()
-                .setLensIntrinsics(1,2,3,4)
-                .build();
-
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        builder.setCameraResolution(new Size(CAMERA_RES_WIDTH,CAMERA_RES_HEIGHT));
-        builder.enableLiveView(true);
-
-
-        builder.addProcessor(aprilTag);
-
-        // Create the vision portal the easy way.
-        // if (USE_WEBCAM) {
-        visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
-
     }
 
     public void shooterInit() {
@@ -279,13 +244,14 @@ public class BaseOpMode extends LinearOpMode {
         autoTelemetryLoop();
 
         if (showCameraTelemetry) {
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            List<AprilTagDetection> currentDetections = vision.getDetections();
             telemetry.addData("number of apriltags", currentDetections.size());
 
             // Step through the list of detections and display info for each one.
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
-                    telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                     telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 } else {
@@ -299,8 +265,8 @@ public class BaseOpMode extends LinearOpMode {
             telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
             telemetry.addLine("RBE = Range, Bearing & Elevation");
 
-            telemetry.addData("Last seen Pattern", obelisk);
-            telemetry.addData("Last seen Target", fieldSide);
+            telemetry.addData("Last seen Pattern", vision.obeliskName);
+            telemetry.addData("Last seen Target", vision.fieldGoalName);
         }
 
         if (showImuTelemetry) {
@@ -344,7 +310,8 @@ public class BaseOpMode extends LinearOpMode {
         }
 
         if (showGooberTelemetry) {
-            telemetry.addData("Goober power", goober.getPower());
+            telemetry.addData("top Goober power", goober.getPower().get(Goober.Type.TOP));
+            telemetry.addData("bottom Goober power", goober.getPower().get(Goober.Type.BOTTOM));
         }
 
         telemetry.update();
