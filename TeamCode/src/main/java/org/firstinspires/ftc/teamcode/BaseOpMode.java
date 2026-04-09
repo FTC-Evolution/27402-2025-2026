@@ -38,10 +38,6 @@ public class BaseOpMode extends LinearOpMode {
     protected boolean showGooberTelemetry = false;
     protected boolean showCameraTelemetry = false;
 
-    protected AprilTagProcessor aprilTag;
-    protected VisionPortal visionPortal;
-
-
     protected DcMotor frontLeftDrive;
     protected DcMotor frontRightDrive;
     protected DcMotor backLeftDrive;
