@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.interfaces;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.HashMap;
+
 public class Goober {
     protected final DcMotor bottomGoober; // goober 2
     protected final DcMotor topGoober;
@@ -35,7 +37,10 @@ public class Goober {
         }
     }
 
-    public double[] getPower() {
-        return new double[]{topGoober.getPower(),bottomGoober.getPower()};
+    public HashMap<Type, Double> getPower() {
+        HashMap<Type, Double> gooberPowerMap = new HashMap<>();
+        gooberPowerMap.put(Type.TOP, topGoober.getPower());
+        gooberPowerMap.put(Type.BOTTOM, bottomGoober.getPower());
+        return gooberPowerMap;
     }
 }
