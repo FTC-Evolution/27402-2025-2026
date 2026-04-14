@@ -62,13 +62,7 @@ public class BaseOpMode extends LinearOpMode {
     protected static final double     DRIVE_SPEED             = 0.6;
     protected static final double     TURN_SPEED              = 0.5;
 
-
-
-
-
-    public static final double DEFAULT_SHOOTER_POWER = 40;
-
-    protected double shooterPower = DEFAULT_SHOOTER_POWER; // Perfect speed to throw the ball when at the point of the launch triangle on the field
+    protected double shooterPower = Shooter.DEFAULT_SHOOTER_POWER; // Perfect speed to throw the ball when at the point of the launch triangle on the field
     protected double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
 
     public double degreesToInches(double degrees) {
@@ -194,7 +188,7 @@ public class BaseOpMode extends LinearOpMode {
         }*/
 
         if (gamepad2.bWasPressed()) {
-            shooterPower = DEFAULT_SHOOTER_POWER;
+            shooterPower = Shooter.DEFAULT_SHOOTER_POWER;
         }
         if (gamepad2.xWasPressed()) {
             shooterPower = 42;
