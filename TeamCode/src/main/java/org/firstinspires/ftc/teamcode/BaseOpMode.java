@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
 import android.util.Size;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -21,8 +22,11 @@ import org.firstinspires.ftc.teamcode.interfaces.Brain;
 import org.firstinspires.ftc.teamcode.interfaces.Goober;
 import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
+import org.firstinspires.ftc.teamcode.utility.SimplePID;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.HashMap;
@@ -81,6 +85,33 @@ public class BaseOpMode extends LinearOpMode {
     public void cameraInit() {
         vision = new Vision(hardwareMap.get(WebcamName.class, "Webcam 1"));
         showCameraTelemetry = true;
+
+        yawPID = new SimplePID(
+                0.03,
+                0,
+                0.002,
+                -0.3,
+                0.3,
+                2.0
+        );
+
+        bearingPID = new SimplePID(
+            0.025,
+                0.0,
+                0.001,
+                -0.4,
+                0.4,
+                1.5
+        );
+
+        rangePID = new SimplePID(
+            0.04,
+                0.0,
+                0.002,
+                -0.5,
+                0.5,
+                2.0
+        );
     }
 
     public void shooterInit() {
