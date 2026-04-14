@@ -269,21 +269,16 @@ public class BaseOpMode extends LinearOpMode {
         autoTelemetryLoop();
 
         if (showCameraTelemetry) {
-            List<AprilTagDetection> currentDetections = vision.getDetections();
-            telemetry.addData("number of apriltags", currentDetections.size());
-
+            // AprilTagDetection detection = vision.lastSeenGoal;
+            AprilTagMetadata detectionMetadata = vision.getFieldGoalMetadata();
+            AprilTagPoseFtc detectionPose = vision.getFieldGoalFtcPose();
             // Step through the list of detections and display info for each one.
-            for (AprilTagDetection detection : currentDetections) {
-                if (detection.metadata != null) {
-                    telemetry.addLine(String.format("\n==== (%d) %s", detection.id, detection.metadata.name));
-                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-                } else {
-                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                if (detectionMetadata != null && detectionPose != null) {
+                    telemetry.addLine(String.format("\n==== (%d) %s", detectionMetadata.id, detectionMetadata));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectionPose.x, detectionPose.y, detectionPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectionPose.pitch, detectionPose.roll, detectionPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectionPose.range, detectionPose.bearing, detectionPose.elevation));
                 }
-            }   // end for() loop
 
             // Add "key" information to telemetry
             telemetry.addLine("key:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
