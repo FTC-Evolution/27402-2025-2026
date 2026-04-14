@@ -43,6 +43,7 @@ public class BaseTeleop extends BaseOpMode {
             driveLoop();
             shooterLoop();
             gooberLoop();
+            tung _tung = cameraLoop();
             // colorSensorLoop();
             telemetryLoop();
         }
@@ -313,5 +314,15 @@ public class BaseTeleop extends BaseOpMode {
         telemetry.update();
     }
 
+    public enum tung {
+        SAHUR
+    }
 
+    public tung cameraLoop() {
+        vision.updateGoalAprilTag();
+        if (gamepad1.b) {
+            alignAprilTag(60.0);
+        }
+        return tung.SAHUR;
+    }
 }
