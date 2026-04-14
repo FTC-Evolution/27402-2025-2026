@@ -27,9 +27,11 @@ public class Goober {
         switch (goober) {
             case TOP:
                 topGoober.setPower(power);
+                bottomGoober.setPower(0);
                 break;
             case BOTTOM:
                 bottomGoober.setPower(power);
+                topGoober.setPower(0);
                 break;
             default:
                 this.modPower(power);
