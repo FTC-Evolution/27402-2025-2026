@@ -53,6 +53,10 @@ public class BaseOpMode extends LinearOpMode {
 
     protected Vision vision;
 
+    SimplePID yawPID;
+    SimplePID bearingPID;
+    SimplePID rangePID;
+
     Brain brain;
     protected NormalizedColorSensor sensor;
 
