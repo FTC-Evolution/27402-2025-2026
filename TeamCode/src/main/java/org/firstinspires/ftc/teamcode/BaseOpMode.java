@@ -263,6 +263,62 @@ public class BaseOpMode extends LinearOpMode {
 
     }
 
+    public enum tung {
+        SAHUR
+    }
+
+    public tung alignAprilTag(double target_distance) {
+        vision.updateGoalAprilTag();
+
+        double drive, turn, strafe = 0;
+
+        turn = yawPID.update(vision.getYawError());
+        strafe = bearingPID.update(vision.getHeadingError());
+        drive = rangePID.update(vision.getRangeError(target_distance));
+
+        /* drive = vision.getRangeError(target_distance);
+        strafe = vision.getHeadingError();
+        turn = vision.getYawError(); */
+
+        if (Math.abs(turn) > 5) {
+            strafe = 0;
+            drive  = 0;
+        }
+
+        tung _tung_tung_sahur = moveRobot(0,strafe, turn);
+
+        return tung.SAHUR;
+    }
+
+    public tung moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+        double frontLeftPower    =  x - y - yaw;
+        double frontRightPower   =  x + y + yaw;
+        double backLeftPower     =  x + y - yaw;
+        double backRightPower    =  x - y + yaw;
+
+        // Normalize wheel powers to be less than 1.0
+        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        max = Math.max(max, Math.abs(backLeftPower));
+        max = Math.max(max, Math.abs(backRightPower));
+
+        if (max > 1.0) {
+            frontLeftPower /= max;
+            frontRightPower /= max;
+            backLeftPower /= max;
+            backRightPower /= max;
+        }
+
+        // Send powers to the wheels.
+        frontLeftDrive.setPower(frontLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        backLeftDrive.setPower(backLeftPower);
+        backRightDrive.setPower(backRightPower);
+
+        return tung.SAHUR;
+    }
+
+    @SuppressLint("DefaultLocale")
     public void telemetryLoop(){
 
         telemetry.addData("status", "runtime: " + runtime);
