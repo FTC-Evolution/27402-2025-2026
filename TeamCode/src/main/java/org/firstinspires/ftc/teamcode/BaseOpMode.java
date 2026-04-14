@@ -289,6 +289,8 @@ public class BaseOpMode extends LinearOpMode {
             telemetry.addLine("key:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
             telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
             telemetry.addLine("RBE = Range, Bearing & Elevation");
+            telemetry.addData("Yaw error", yawPID.error);
+            telemetry.addData("Strafe error", bearingPID.error);
 
             telemetry.addData("Last seen Pattern", vision.obeliskName);
             telemetry.addData("Last seen Target", vision.fieldGoalName);
