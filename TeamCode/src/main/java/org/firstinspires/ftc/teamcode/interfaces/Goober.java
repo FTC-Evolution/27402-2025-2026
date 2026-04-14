@@ -33,9 +33,6 @@ public class Goober {
                 bottomGoober.setPower(power);
                 topGoober.setPower(0);
                 break;
-            default:
-                this.modPower(power);
-                break;
         }
     }
 
