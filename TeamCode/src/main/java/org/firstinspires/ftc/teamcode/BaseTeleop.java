@@ -29,6 +29,7 @@ public class BaseTeleop extends BaseOpMode {
         shooterInit();
         gooberInit();
         cameraInit();
+        shooterLedInit();
         // colorSensorInit();
         telemetryInit();
         imuInit();

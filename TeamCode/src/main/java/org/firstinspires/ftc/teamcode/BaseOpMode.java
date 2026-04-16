@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.interfaces.Brain;
 import org.firstinspires.ftc.teamcode.interfaces.Goober;
+import org.firstinspires.ftc.teamcode.interfaces.Led;
 import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
 import org.firstinspires.ftc.teamcode.utility.SimplePID;
@@ -58,6 +60,8 @@ public class BaseOpMode extends LinearOpMode {
     SimplePID rangePID;
 
     Brain brain;
+
+    protected Led led;
     protected NormalizedColorSensor sensor;
 
     protected final double SHOOTER_TICKS_PER_REV = 28;
@@ -116,6 +120,15 @@ public class BaseOpMode extends LinearOpMode {
                 0.5,
                 2.0
         );
+    }
+    class full {
+
+    }
+
+
+    public full shooterLedInit() {
+        led = new Led(hardwareMap.get(Servo.class, "led"));
+        return new full();
     }
 
     public void shooterInit() {
