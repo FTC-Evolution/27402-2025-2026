@@ -306,7 +306,7 @@ public class BaseOpMode extends LinearOpMode {
             drive  = 0;
         }
 
-        tung _tung_tung_sahur = moveRobot(0,strafe, turn);
+        tung _tung_tung_sahur = moveRobot(drive,strafe, turn);
 
         return tung.SAHUR;
     }
