@@ -14,6 +14,8 @@ public class Shooter {
     static final double     SHOOTER_F              = 0;
     static final double     SHOOTER_TICKS_PER_REV  = 28;
 
+    static final double     SHOOTER_READY_THRESHOLD= 61;
+
     public static final double DEFAULT_SHOOTER_POWER = 31;
 
     public Shooter(DcMotorEx shooter1, DcMotorEx shooter2) {
@@ -54,5 +56,23 @@ public class Shooter {
 
     public double speed(double speed) {
         return speed * SHOOTER_TICKS_PER_REV;
+    }
+
+    public double[] readyRange(double goalTps) {
+        return new double[]{goalTps - SHOOTER_READY_THRESHOLD, goalTps + SHOOTER_READY_THRESHOLD};
+    }
+
+    public boolean inReadyRange(double goalTps) {
+        double[] shooterReadyRange = readyRange(goalTps);
+
+        boolean shooter1InRange = shooter1.getVelocity() >= shooterReadyRange[0]
+                && shooter1.getVelocity() <= shooterReadyRange[1];
+        boolean shooter2InRange = shooter2.getVelocity() >= shooterReadyRange[0]
+                && shooter2.getVelocity() <= shooterReadyRange[1];
+
+        boolean shooter1NotEmpty = shooter1.getVelocity() > 0;
+        boolean shooter2NotEmpty = shooter2.getVelocity() > 0;
+
+        return shooter1NotEmpty && shooter1InRange && shooter2NotEmpty && shooter2InRange;
     }
 }
