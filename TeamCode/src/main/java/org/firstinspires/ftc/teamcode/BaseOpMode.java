@@ -241,6 +241,14 @@ public class BaseOpMode extends LinearOpMode {
         if (gamepad2.xWasPressed()) {
             shooterPower = 42;
         }
+
+        if (shooter.inReadyRange(shooterTPS)) {
+            led.setColour(0.5);
+            telemetry.addLine("Shooters are ready... GET SHOOTING!!!!!!!");
+        } else {
+            led.setColour(1);
+        }
+
     }
 
     public void gooberLoop() {
