@@ -203,7 +203,7 @@ public class BaseOpMode extends LinearOpMode {
     }
 
     public void shooterLoop() {
-        shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
+        shooterTPS = shooter.speed(shooterPower);
 
         shooter.modVelocity(gamepad2.right_trigger * shooterTPS);
 
