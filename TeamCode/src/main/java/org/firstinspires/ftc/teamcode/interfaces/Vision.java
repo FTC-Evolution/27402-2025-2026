@@ -22,13 +22,13 @@ public class Vision {
     public static final int        CAMERA_RES_WIDTH       = 640;
     public static final int        CAMERA_RES_HEIGHT      = 480;
 
-    public static final double        CAMERA_X               = -3.5;
+    public static final double        CAMERA_X               = 0;
     public static final double        CAMERA_Y               = 0;
     public static final double        CAMERA_Z               = 0;
 
     public static final double        CAMERA_YAW             = 0;
     public static final double        CAMERA_PITCH           = -80;
-    public static final double        CAMERA_ROLL            = 10;
+    public static final double        CAMERA_ROLL            = 0;
 
     public static final double     APRILTAG_TOLERANCE_DISTANCE = 3;
     public static final double     APRILTAG_TOLERANCE_ANGLE= 5;
