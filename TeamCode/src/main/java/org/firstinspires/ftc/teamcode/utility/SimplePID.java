@@ -30,10 +30,11 @@ public class SimplePID {
         double output = (kP * error) + (kI * integral) + (kD * derivative);
 
         double clampedOutput = clamp(output);
+        double bandOutput = deadband(clampedOutput);
 
-        this.error = clampedOutput;
+        this.error = bandOutput;
 
-        return clampedOutput;
+        return bandOutput;
     }
 
     public void reset() {
