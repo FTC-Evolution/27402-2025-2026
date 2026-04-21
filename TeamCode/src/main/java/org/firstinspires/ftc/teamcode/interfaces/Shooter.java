@@ -75,4 +75,18 @@ public class Shooter {
 
         return shooter1NotEmpty && shooter1InRange && shooter2NotEmpty && shooter2InRange;
     }
+
+    public void fireUp(double shooterTPS, Led led) {
+        modVelocity(shooterTPS);
+
+        while (!inReadyRange(shooterTPS)) {
+            led.setColour(Led.Colour.WHITE);
+            // telemetry.addLine("Waiting for shooters to fire up");
+            // telemetry.update();
+        }
+
+        led.setColour(Led.Colour.GREEN);
+        //telemetry.addLine("Shooters ready ... Shooting");
+        //telemetry.update();
+    }
 }
