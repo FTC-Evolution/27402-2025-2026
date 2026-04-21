@@ -100,16 +100,16 @@ public class BaseOpMode extends LinearOpMode {
                 0.002,
                 -0.3,
                 0.3,
-                2.0
+                0.1
         );
 
         bearingPID = new SimplePID(
             0.025,
                 0.0,
                 0.001,
-                -0.4,
-                0.4,
-                1.5
+                -2,
+                2,
+                0.1
         );
 
         rangePID = new SimplePID(
