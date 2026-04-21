@@ -295,7 +295,7 @@ public class BaseOpMode extends LinearOpMode {
         double drive, turn, strafe = 0;
 
         turn = yawPID.update(vision.getYawError());
-        strafe = bearingPID.update(vision.getHeadingError());
+        strafe = bearingPID.update(vision.getHeadingError()*2);
         drive = rangePID.update(vision.getRangeError(target_distance));
 
         /* drive = vision.getRangeError(target_distance);
