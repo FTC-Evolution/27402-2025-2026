@@ -2,10 +2,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.BaseAutonomous;
-import org.firstinspires.ftc.teamcode.interfaces.Shooter;
-import org.firstinspires.ftc.teamcode.interfaces.Vision;
-
-import java.util.Date;
 
 @Autonomous(name="Petit Triangle Bleu")
 public class PetitTriangleBleu extends BaseAutonomous {

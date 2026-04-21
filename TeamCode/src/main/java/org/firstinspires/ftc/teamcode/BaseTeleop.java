@@ -5,10 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.interfaces.Brain;
-import org.firstinspires.ftc.teamcode.interfaces.Shooter;
-import org.firstinspires.ftc.teamcode.interfaces.Vision;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @TeleOp(name="Teleop 27402 Sec 2")
 public class BaseTeleop extends BaseOpMode {

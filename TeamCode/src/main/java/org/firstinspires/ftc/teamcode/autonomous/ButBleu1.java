@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.BaseAutonomous;
-import org.firstinspires.ftc.teamcode.interfaces.Led;
-import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 
 @Autonomous(name="But Bleu - Richel 1")
 public class ButBleu1 extends BaseAutonomous {

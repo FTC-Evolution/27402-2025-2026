@@ -4,14 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.interfaces.Brain;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
 public class BaseAutonomous extends BaseOpMode {
-    AngleUnit angle = AngleUnit.DEGREES;
-
     static final String[] possiblePaths = {"default", "avancer", "reculer","practice","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
     int currentPath = 0;
     protected double inchValue = 6.3;
