@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name="KP Finder", group="Utility")
+@Disabled
 
 public class KPFinder extends LinearOpMode {
     boolean showImuTelemetry = false;
