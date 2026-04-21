@@ -243,10 +243,11 @@ public class BaseOpMode extends LinearOpMode {
         }
 
         if (shooter.inReadyRange(shooterTPS)) {
-            led.setColour(0.5);
+            led.setColour(Led.Colour.GREEN);
             telemetry.addLine("Shooters are ready... GET SHOOTING!!!!!!!");
         } else {
-            led.setColour(1);
+            led.setColour(Led.Colour.WHITE);
+            telemetry.addLine("Not Fast Enough. WAIT UP.");
         }
 
     }
