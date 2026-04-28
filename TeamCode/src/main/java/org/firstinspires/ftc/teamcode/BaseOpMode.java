@@ -49,8 +49,9 @@ public class BaseOpMode extends LinearOpMode {
     SimplePID yawPID;
     SimplePID bearingPID;
     SimplePID rangePID;
+    protected SimplePID robotOrientationPID;
 
-    Brain brain;
+    protected Brain brain;
 
     protected Led led;
     protected NormalizedColorSensor sensor;
