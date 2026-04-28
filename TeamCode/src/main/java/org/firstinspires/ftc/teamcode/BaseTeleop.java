@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
 @TeleOp(name="Teleop 27402 Sec 2")
 public class BaseTeleop extends BaseOpMode {
@@ -316,13 +317,13 @@ public class BaseTeleop extends BaseOpMode {
     }
 
     public tung cameraLoop() {
-        vision.updateGoalAprilTag();
+        vision.updateGoalAprilTag(Vision.UpdateGoalAprilTagGoal.BOTH);
         if (gamepad1.b) {
-            alignAprilTag(50.0);
+            alignAprilTag(50.0, Vision.UpdateGoalAprilTagGoal.BOTH);
         }
 
         if (gamepad1.y) {
-            alignAprilTag(100.0);
+            alignAprilTag(100.0, Vision.UpdateGoalAprilTagGoal.BOTH);
         }
         return tung.SAHUR;
     }
