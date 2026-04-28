@@ -281,8 +281,8 @@ public class BaseOpMode extends LinearOpMode {
         SAHUR
     }
 
-    public tung alignAprilTag(double target_distance) {
-        vision.updateGoalAprilTag();
+    public boolean alignAprilTag(double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect) {
+        vision.updateGoalAprilTag(goalDetect);
 
         double drive, turn, strafe = 0;
 
@@ -301,7 +301,7 @@ public class BaseOpMode extends LinearOpMode {
 
         tung _tung_tung_sahur = moveRobot(drive,strafe, turn);
 
-        return tung.SAHUR;
+        return turn == 0 && strafe == 0 && drive == 0;
     }
 
     public tung moveRobot(double x, double y, double yaw) {
