@@ -11,11 +11,7 @@ public class ButBleu1 extends BaseAutonomous {
         drive(DRIVE_SPEED,  -45,  -45, 3.0); // adjust from 51
         // drive(TURN_SPEED,   , -24, 4.0);
 
-        vision.updateGoalAprilTag();
-
-        double target_distance = 45;
-
-        // alignAprilTag(target_distance);
+        alignFieldGoal(7500, 45, Vision.UpdateGoalAprilTagGoal.BLUE);
 
         shooterTPS = shooter.speed(shooterPower);
 
