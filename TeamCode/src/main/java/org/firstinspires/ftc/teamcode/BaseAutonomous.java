@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
 public class BaseAutonomous extends BaseOpMode {
     static final String[] possiblePaths = {"default", "avancer", "reculer","practice","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
@@ -259,5 +262,25 @@ public class BaseAutonomous extends BaseOpMode {
         telemetry.addData("inches", inchValue);
 
         telemetry.update();
+    }
+
+    public void alignFieldGoal(double timeout_ms, double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect) {
+        boolean aligned = false;
+        ElapsedTime alignRunTime = new ElapsedTime();
+        alignRunTime.reset();
+
+        while (!aligned || alignRunTime.milliseconds() < timeout_ms) {
+            aligned = alignAprilTag(target_distance, goalDetect);
+        }
+    }
+
+    public void rotate(double timeout_ms, double target_rotation) {
+        boolean turned = false;
+        ElapsedTime turnRunTime = new ElapsedTime();
+        turnRunTime.reset();
+
+        while (!turned || turnRunTime.milliseconds() > timeout_ms) {
+            turned = rotateRobot(target_rotation);
+        }
     }
 }
