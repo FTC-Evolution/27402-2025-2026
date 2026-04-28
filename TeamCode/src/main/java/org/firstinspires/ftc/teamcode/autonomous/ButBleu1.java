@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.BaseAutonomous;
+import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
 @Autonomous(name="But Bleu - Richel 1")
 public class ButBleu1 extends BaseAutonomous {
@@ -23,5 +24,9 @@ public class ButBleu1 extends BaseAutonomous {
         goober.modPower(0);
         sleep(500);
         shooter.modVelocity(0);
+
+        driveCrabe(DRIVE_SPEED, 32, -32, 5.0);
+
+        rotate(2500, 135);
     }
 }
