@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.BaseAutonomous;
+import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
 @Autonomous(name="Petit Triangle Bleu")
 public class PetitTriangleBleu extends BaseAutonomous {
@@ -10,7 +11,7 @@ public class PetitTriangleBleu extends BaseAutonomous {
         driveCrabe(DRIVE_SPEED, 72, -72, 5.0);
         // drive(TURN_SPEED, degreesToInches(45), -degreesToInches(45), 5.0);
 
-        vision.updateGoalAprilTag();
+        vision.updateGoalAprilTag(Vision.UpdateGoalAprilTagGoal.BLUE);
 
         double target_distance = 52;
 
