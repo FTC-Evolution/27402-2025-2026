@@ -85,11 +85,31 @@ public class Vision {
         return aprilTagProcessor.getDetections();
     }
 
-    public void updateGoalAprilTag() {
+    public static enum UpdateGoalAprilTagGoal {
+        BOTH,
+        RED,
+        BLUE
+    }
+
+    public void updateGoalAprilTag(UpdateGoalAprilTagGoal goalDetect) {
         currentGoal = null;
         for (AprilTagDetection detection : aprilTagProcessor.getDetections()) {
             if (detection.metadata != null) {
-                if (detection.id == 20 || detection.id == 24) { // GOAL april ids
+                    boolean detectionCondition=false;
+                    switch (goalDetect) {
+                    case RED:
+                        detectionCondition =  detection.id == 24;
+                        break;
+                    case BLUE:
+                        detectionCondition = detection.id == 20;
+                        break;
+                    case BOTH:
+                        detectionCondition = detection.id == 20 || detection.id == 24;
+                        break;
+                };
+
+
+                if (detectionCondition) { // GOAL april ids
                     fieldGoalName = fieldSidePositions.get(detection.id);
                     lastSeenGoal = detection;
                     currentGoal = detection;
