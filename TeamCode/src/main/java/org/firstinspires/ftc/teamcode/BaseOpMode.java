@@ -112,6 +112,15 @@ public class BaseOpMode extends LinearOpMode {
                 0.5,
                 2.0
         );
+
+        robotOrientationPID = new SimplePID(
+                0.03,
+                0,
+                0.002,
+                -0.3,
+                0.3,
+                0.1
+        );
     }
     class full {
 
@@ -302,6 +311,17 @@ public class BaseOpMode extends LinearOpMode {
         tung _tung_tung_sahur = moveRobot(drive,strafe, turn);
 
         return turn == 0 && strafe == 0 && drive == 0;
+    }
+
+    public boolean rotateRobot(double target_rotation) {
+        double turn = 0;
+
+        turn = robotOrientationPID.update(target_rotation - brain.getYaw(AngleUnit.DEGREES));
+
+
+        tung _tung_tung_sahur = moveRobot(0,0, turn);
+
+        return turn == 0;
     }
 
     public tung moveRobot(double x, double y, double yaw) {
