@@ -223,7 +223,10 @@ public class BaseOpMode extends LinearOpMode {
             shooterPower += 10;
         }*/
         if (gamepad2.yWasPressed()) {
-            if (shooterPower >= 2147483647)  { // 32 bit integer limit :P
+            if (shooterPower >=
+                    // 2147483647 // 32 bit integer limit :P
+                    45
+            )  {
                 return;
             }
             shooterPower += 1;
