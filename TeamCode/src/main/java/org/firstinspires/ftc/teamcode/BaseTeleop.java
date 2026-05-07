@@ -93,10 +93,6 @@ public class BaseTeleop extends BaseOpMode {
             rx = 0;
         }
 
-        if (gamepad1.startWasPressed()) {
-            brain.resetYaw();
-        }
-
         double botDirection = brain.getYaw(AngleUnit.RADIANS);
 
         double rotX = x * Math.cos(-botDirection) - y * Math.sin(-botDirection);
