@@ -279,7 +279,7 @@ public class BaseAutonomous extends BaseOpMode {
         ElapsedTime turnRunTime = new ElapsedTime();
         turnRunTime.reset();
 
-        while (!turned || turnRunTime.milliseconds() > timeout_ms) {
+        while (!turned || turnRunTime.milliseconds() < timeout_ms) {
             turned = rotateRobot(target_rotation);
         }
     }
