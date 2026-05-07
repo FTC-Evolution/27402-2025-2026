@@ -328,7 +328,7 @@ public class BaseOpMode extends LinearOpMode {
     public boolean rotateRobot(double target_rotation) {
         double turn = 0;
 
-        turn = robotOrientationPID.update(target_rotation - brain.getYaw(AngleUnit.DEGREES));
+        turn = robotOrientationPID.update(-brain.getYaw(AngleUnit.DEGREES));
 
 
         tung _tung_tung_sahur = moveRobot(0,0, turn);
