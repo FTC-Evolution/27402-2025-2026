@@ -43,6 +43,7 @@ public class BaseTeleop extends BaseOpMode {
             gooberLoop();
             tung _tung = cameraLoop();
             // colorSensorLoop();
+            fieldOrientationLoop();
             telemetryLoop();
         }
 
