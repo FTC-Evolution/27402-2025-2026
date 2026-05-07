@@ -25,8 +25,10 @@ public class ButBleu1 extends BaseAutonomous {
         sleep(500);
         shooter.modVelocity(0);
 
-        driveCrabe(DRIVE_SPEED, 32, -32, 5.0);
+        drive(DRIVE_SPEED,  20,  20, 3.0);
 
         rotate(2500, 135);
+
+        driveCrabe(DRIVE_SPEED, 32, -32, 5.0);
     }
 }
