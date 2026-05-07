@@ -243,7 +243,16 @@ public class BaseOpMode extends LinearOpMode {
             shooterPower = Shooter.DEFAULT_SHOOTER_POWER;
         }
         if (gamepad2.xWasPressed()) {
-            shooterPower = 42;
+            shooterPower = Shooter.DEFAULT_LONG_SHOOTER_POWER;
+        }
+        if (gamepad2.leftStickButtonWasPressed()) {
+            shooterPower = Shooter.DEFAULT_SIDE_SHOOTER_POWER;
+        }
+        if (gamepad1.backWasPressed()) {
+            shooterPower -= 0.5;
+        }
+        if (gamepad1.startWasPressed()) {
+            shooterPower += 0.5;
         }
 
         if (shooter.inReadyRange(shooterTPS)) {

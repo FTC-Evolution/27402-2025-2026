@@ -16,7 +16,9 @@ public class Shooter {
 
     static final double     SHOOTER_READY_THRESHOLD= 61;
 
-    public static final double DEFAULT_SHOOTER_POWER = 31;
+    public static final double DEFAULT_SHOOTER_POWER = 32;
+    public static final double DEFAULT_LONG_SHOOTER_POWER = 40;
+    public static final double DEFAULT_SIDE_SHOOTER_POWER = DEFAULT_SHOOTER_POWER - 1;
 
     public Shooter(DcMotorEx shooter1, DcMotorEx shooter2) {
         this.shooter1 = shooter1;
