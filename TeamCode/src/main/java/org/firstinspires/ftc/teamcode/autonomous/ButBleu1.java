@@ -27,7 +27,7 @@ public class ButBleu1 extends BaseAutonomous {
 
         drive(DRIVE_SPEED,  20,  20, 3.0);
 
-        rotate(2500, 135);
+        rotate(2500, 35);
 
         driveCrabe(DRIVE_SPEED, 32, -32, 5.0);
     }
