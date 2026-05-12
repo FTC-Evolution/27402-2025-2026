@@ -23,18 +23,19 @@ public class SimplePID {
     }
 
     public double update(double error) {
-        integral += error;
-        double derivative = error - lastError;
-        lastError = error;
+        double bandedError = deadband(error);
 
-        double output = (kP * error) + (kI * integral) + (kD * derivative);
+        integral += bandedError;
+        double derivative = bandedError - lastError;
+        lastError = bandedError;
+
+        double output = (kP * bandedError) + (kI * integral) + (kD * derivative);
 
         double clampedOutput = clamp(output);
-        double bandOutput = deadband(clampedOutput);
 
-        this.error = bandOutput;
+        this.error = clampedOutput;
 
-        return bandOutput;
+        return clampedOutput;
     }
 
     public void reset() {
