@@ -289,10 +289,6 @@ public class BaseOpMode extends LinearOpMode {
 
     }
 
-    public enum tung {
-        SAHUR
-    }
-
     public boolean alignAprilTag(double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect) {
         vision.updateGoalAprilTag(goalDetect);
 
