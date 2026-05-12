@@ -311,6 +311,21 @@ public class BaseOpMode extends LinearOpMode {
         strafe = bearingPID.update(vision.getHeadingError()*2);
         drive = rangePID.update(vision.getRangeError(target_distance));
 
+        telemetry.addData("Target distance",target_distance);
+
+        telemetry.addLine("--------errorsrreturned--------");
+
+        telemetry.addData("Drive", drive);
+        telemetry.addData("strafe", strafe);
+        telemetry.addData("turn",turn);
+
+        telemetry.addLine("-------------Error passed-----------");
+        telemetry.addData("yaw",vision.getYawError());
+        telemetry.addData("heading",vision.getHeadingError()*2);
+        telemetry.addData("range",vision.getRangeError(target_distance));
+
+        telemetry.update();
+
         /* drive = vision.getRangeError(target_distance);
         strafe = vision.getHeadingError();
         turn = vision.getYawError(); */
