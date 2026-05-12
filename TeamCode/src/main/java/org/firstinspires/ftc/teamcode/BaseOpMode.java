@@ -119,7 +119,7 @@ public class BaseOpMode extends LinearOpMode {
                 0.002,
                 -0.3,
                 0.3,
-                0.1
+                1
         );
     }
     class full {
