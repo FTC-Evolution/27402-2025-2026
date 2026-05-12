@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -7,7 +8,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utility.SimplePID;
 
 @TeleOp(name="KP Finder - Rotation")
-public class KpFindRoation extends BaseOpMode {
+@Disabled
+public class KpFindRotation extends BaseOpMode {
     double ROTATION_KP = 0;
     double ROTATION_I = 0;
     double ROTATION_KD = 0;
