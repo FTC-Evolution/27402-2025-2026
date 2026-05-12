@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.interfaces.Vision;
 public class ButBleu1 extends BaseAutonomous {
     @Override
     public void Run() {
+        brain.resetYaw();
         drive(DRIVE_SPEED,  -45,  -45, 3.0); // adjust from 51
         // drive(TURN_SPEED,   , -24, 4.0);
 
