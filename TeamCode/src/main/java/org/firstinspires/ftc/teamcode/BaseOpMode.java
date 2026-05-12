@@ -122,14 +122,9 @@ public class BaseOpMode extends LinearOpMode {
                 1
         );
     }
-    class full {
 
-    }
-
-
-    public full shooterLedInit() {
+    public void shooterLedInit() {
         led = new Led(hardwareMap.get(Servo.class, "led"));
-        return new full();
     }
 
     public void shooterInit() {
@@ -194,14 +189,14 @@ public class BaseOpMode extends LinearOpMode {
         telemetry.update();
     }
 
-    public void colorSensorInit() {
+    /*public void colorSensorInit() {
         showColorTelemetry = true;
         sensor = hardwareMap.get(NormalizedColorSensor.class,"colorsensor");
     }
 
     public void colorSensorLoop() {
 
-    }
+    }*/
 
     public void shooterLoop() {
         shooterTPS = shooter.speed(shooterPower);
@@ -290,10 +285,6 @@ public class BaseOpMode extends LinearOpMode {
 
     }*/
 
-    public void aprilTagLoop() {
-
-    }
-
     public void autoTelemetryLoop() {
 
     }
@@ -305,11 +296,9 @@ public class BaseOpMode extends LinearOpMode {
     public boolean alignAprilTag(double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect) {
         vision.updateGoalAprilTag(goalDetect);
 
-        double drive, turn, strafe = 0;
-
-        turn = yawPID.update(vision.getYawError());
-        strafe = bearingPID.update(vision.getHeadingError()*2);
-        drive = rangePID.update(vision.getRangeError(target_distance));
+        double turn = yawPID.update(vision.getYawError());
+        double strafe = bearingPID.update(vision.getHeadingError()*2);
+        double drive = rangePID.update(vision.getRangeError(target_distance));
 
         telemetry.addData("Target distance",target_distance);
 
@@ -335,15 +324,13 @@ public class BaseOpMode extends LinearOpMode {
             drive  = 0;
         }
 
-        tung _tung_tung_sahur = moveRobot(drive,strafe, turn);
+        moveRobot(drive,strafe, turn);
 
         return turn == 0 && strafe == 0 && drive == 0;
     }
 
     public boolean rotateRobot(double target_rotation) {
-        double turn = 0;
-
-        turn = robotOrientationPID.update(AngleUnit.normalizeDegrees(target_rotation-brain.getYaw(AngleUnit.DEGREES)));
+        double turn = robotOrientationPID.update(AngleUnit.normalizeDegrees(target_rotation-brain.getYaw(AngleUnit.DEGREES)));
 
         telemetry.addData("Target error passed to update", AngleUnit.normalizeDegrees(target_rotation-brain.getYaw(AngleUnit.DEGREES)));
         telemetry.addData("Current yaw", brain.getYaw(AngleUnit.DEGREES));
@@ -354,12 +341,12 @@ public class BaseOpMode extends LinearOpMode {
         telemetry.update();
 
 
-        tung _tung_tung_sahur = moveRobot(0,0, turn);
+        moveRobot(0,0, turn);
 
         return turn == 0;
     }
 
-    public tung moveRobot(double x, double y, double yaw) {
+    public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
         double frontLeftPower    =  x - y - yaw;
         double frontRightPower   =  x + y + yaw;
@@ -383,8 +370,6 @@ public class BaseOpMode extends LinearOpMode {
         frontRightDrive.setPower(frontRightPower);
         backLeftDrive.setPower(backLeftPower);
         backRightDrive.setPower(backRightPower);
-
-        return tung.SAHUR;
     }
 
     @SuppressLint("DefaultLocale")
@@ -433,7 +418,7 @@ public class BaseOpMode extends LinearOpMode {
         if (showColorTelemetry) {
             NormalizedRGBA colors = sensor.getNormalizedColors();
             int colorCode = colors.toColor();
-            String ballColor = "";
+            String ballColor;
 
             telemetry.addData("Hue", JavaUtil.colorToHue(colorCode));
             telemetry.addData("Saturation", "%.3f", JavaUtil.colorToSaturation(colorCode));

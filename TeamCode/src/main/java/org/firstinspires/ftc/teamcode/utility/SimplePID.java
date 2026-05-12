@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.utility;
 
 public class SimplePID {
-    private double kP;
-    private double kI;
-    private double kD;
+    private final double kP;
+    private final double kI;
+    private final double kD;
 
     private double integral, lastError;
-    private double min, max;
-    private double band;
+    private final double min, max;
+    private final double band;
 
     public double error;
 
@@ -38,10 +38,10 @@ public class SimplePID {
         return clampedOutput;
     }
 
-    public void reset() {
+    /*public void reset() {
         integral = 0;
         lastError = 0;
-    }
+    }*/
 
     private double clamp(double value) {
         return Math.max(min, Math.min(max, value));

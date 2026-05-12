@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.interfaces.Vision;
 import org.firstinspires.ftc.teamcode.utility.SimplePID;
 
 @TeleOp(name="KP Finder - Rotation")
@@ -70,7 +68,7 @@ public class KpFindRoation extends BaseOpMode {
             }
             ROTATION_KP += 0.01;
             updatePID();
-        };
+        }
         if (gamepad1.aWasPressed()) {
             if (gamepad1.left_trigger > 0.5) {
                 ROTATION_KP -= 0.1;
@@ -84,7 +82,7 @@ public class KpFindRoation extends BaseOpMode {
             }
             ROTATION_KP -= 0.01;
             updatePID();
-        };
+        }
         if (gamepad1.yWasPressed()) {
             if (gamepad1.left_trigger > 0.5) {
                 ROTATION_KD += 0.05;
@@ -98,7 +96,7 @@ public class KpFindRoation extends BaseOpMode {
             }
             ROTATION_KD += 0.001;
             updatePID();
-        };
+        }
         if (gamepad1.xWasPressed()) {
             if (gamepad1.left_trigger > 0.5) {
                 ROTATION_KD -= 0.05;
@@ -112,7 +110,7 @@ public class KpFindRoation extends BaseOpMode {
             }
             ROTATION_KD -= 0.001;
             updatePID();
-        };
+        }
         if (gamepad1.dpadUpWasPressed()) {
             if (gamepad1.left_trigger > 0.5) {
                 ROTATION_I += 1;
@@ -125,7 +123,7 @@ public class KpFindRoation extends BaseOpMode {
                 return;
             }
             ROTATION_I += 0.05;
-        };
+        }
         if (gamepad1.dpadDownWasPressed()) {
             if (gamepad1.left_trigger > 0.5) {
                 ROTATION_I -= 1;
@@ -139,7 +137,7 @@ public class KpFindRoation extends BaseOpMode {
             }
             ROTATION_I -= 0.05;
             updatePID();
-        };
+        }
     }
 
     public void rotate(double timeout_ms, double target_rotation) {
