@@ -17,7 +17,7 @@ public class Shooter {
     static final double     SHOOTER_READY_THRESHOLD= 41;
 
     public static final double DEFAULT_SHOOTER_POWER = 32;
-    public static final double DEFAULT_LONG_SHOOTER_POWER = 40;
+    public static final double DEFAULT_LONG_SHOOTER_POWER = 39.5;
     public static final double DEFAULT_LONG_AUTONOMOUS_SHOOTER_POWER = DEFAULT_LONG_SHOOTER_POWER;
     public static final double DEFAULT_SIDE_SHOOTER_POWER = DEFAULT_SHOOTER_POWER - 1;
 
