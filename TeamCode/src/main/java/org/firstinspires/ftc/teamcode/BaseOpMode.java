@@ -260,7 +260,16 @@ public class BaseOpMode extends LinearOpMode {
         if (shooter.inReadyRange(shooterTPS)) {
             led.setColour(Led.Colour.GREEN);
             telemetry.addLine("Shooters Are Ready. GET SHOOTING.");
-        } else {
+        } else if (shooter.getVelocity()[0] > shooter.readyRange(shooterTPS)[0]
+                    && shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]) {
+            led.setColour(Led.Colour.RED);
+            telemetry.addLine("Overshooting speed - Restart SHOOTER!");
+        } else if (shooter.getVelocity()[0] > shooter.speed(shooterTPS) + 20
+                    && shooter.getVelocity()[1] > shooter.speed(shooterTPS) + 20) {
+            led.TeamSpiritBlitz();
+            telemetry.addLine("Go BALL!");
+        }
+        else {
             led.setColour(Led.Colour.WHITE);
             telemetry.addLine("Not Fast Enough. WAIT UP.");
         }
