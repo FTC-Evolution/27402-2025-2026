@@ -32,6 +32,8 @@ public class PetitTriangleRouge extends BaseAutonomous {
 
         drive(DRIVE_SPEED, 10, 10, 5.0);
 
+        led.TeamSpirit();
+
         // requestOpModeStop();
     }
 }

@@ -31,6 +31,8 @@ public class ButRouge1 extends BaseAutonomous {
 
         drive(DRIVE_SPEED, 45, 45, 5.0);
 
+        led.TeamSpirit();
+
         // requestOpModeStop();
     }
 }
