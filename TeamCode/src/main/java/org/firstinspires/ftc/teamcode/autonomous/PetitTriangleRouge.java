@@ -16,9 +16,13 @@ public class PetitTriangleRouge extends BaseAutonomous {
         shooter.fireUp(shooterTPS, led);
 
         sleep(3000);
-        goober.modPower(-1);
-        sleep(2500);
-        goober.modPower(0);
+        intake(500);
+        shooter.fireUp(shooterTPS, led);
+        sleep(1500);
+        intake(700);
+        shooter.fireUp(shooterTPS, led);
+        sleep(1500);
+        intake(1000);
         sleep(500);
         shooter.modVelocity(0);
 
