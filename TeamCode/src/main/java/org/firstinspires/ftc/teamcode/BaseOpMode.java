@@ -125,7 +125,6 @@ public class BaseOpMode extends LinearOpMode {
 
     public void shooterLedInit() {
         led = new Led(hardwareMap.get(Servo.class, "led"));
-        led.TeamSpiritBlitz();
     }
 
     public void shooterInit() {
