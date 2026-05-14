@@ -265,6 +265,12 @@ public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
+    public void intake(long time_ms) {
+        goober.modPower(-1);
+        sleep(time_ms);
+        goober.modPower(0);
+    }
+
     public void alignFieldGoal(double timeout_ms, double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect, double yaw_offset) {
         boolean aligned = false;
         ElapsedTime alignRunTime = new ElapsedTime();
