@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.BaseAutonomous;
 
 @Autonomous(name="But Bleu - Rayane")
+@Disabled
 public class ButBleu2 extends BaseAutonomous {
     @Override
     public void Run() {
