@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.BaseAutonomous;
+import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
 @Autonomous(name="But Bleu - Richel 1")
@@ -15,7 +16,7 @@ public class ButBleu1 extends BaseAutonomous {
 
         alignFieldGoal(2500, 45, Vision.UpdateGoalAprilTagGoal.BLUE, 0);
 
-        shooterTPS = shooter.speed(shooterPower);
+        shooterTPS = shooter.speed(Shooter.DEFAULT_SHOOTER_POWER);
 
         shooter.fireUp(shooterTPS, led);
 
