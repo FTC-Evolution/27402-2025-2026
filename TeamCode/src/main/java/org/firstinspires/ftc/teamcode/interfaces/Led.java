@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.interfaces;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Led {
@@ -21,6 +23,68 @@ public class Led {
     public Led(Servo led){
         this.led = led;
     }
+
+        public void Confetti() {
+            setColour(Colour.RED);
+            sleep(50);
+            setColour(Colour.ORANGE);
+            sleep(50);
+            setColour(Colour.YELLOW);
+            sleep(50);
+            setColour(Colour.SAGE);
+            sleep(50);
+            setColour(Colour.GREEN);
+            sleep(50);
+            setColour(Colour.AZURE);
+            sleep(50);
+            setColour(Colour.BLUE);
+            sleep(50);
+            setColour(Colour.INDIGO);
+            sleep(50);
+            setColour(Colour.VIOLET);
+            sleep(50);
+            setColour(Colour.WHITE);
+        }
+        public void TeamSpirit() {
+            setColour(Colour.ORANGE);
+            sleep(100);
+            setColour(Colour.YELLOW);
+            sleep(100);
+            setColour(Colour.WHITE);
+            sleep(100);
+            setColour(Colour.YELLOW);
+            sleep(100);
+            setColour(Colour.ORANGE);
+            sleep(100);
+            setColour(Colour.WHITE);
+            sleep(100);
+            setColour(Colour.ORANGE);
+            sleep(100);
+            setColour(Colour.YELLOW);
+            sleep(100);
+            setColour(Colour.WHITE);
+            sleep(100);
+            setColour(Colour.YELLOW);
+            sleep(100);
+            setColour(Colour.ORANGE);
+            sleep(100);
+            setColour(Colour.WHITE);
+        }
+
+    public void TeamSpiritBlitz() {
+        setColour(Colour.ORANGE);
+        sleep(100);
+        setColour(Colour.YELLOW);
+        sleep(100);
+        setColour(Colour.WHITE);
+        sleep(100);
+        setColour(Colour.YELLOW);
+        sleep(100);
+        setColour(Colour.ORANGE);
+        sleep(100);
+        setColour(Colour.WHITE);
+    }
+
 
     public void setColour(double colour) {
         led.setPosition(colour);
