@@ -23,7 +23,7 @@ public class ButBleu1 extends BaseAutonomous {
         sleep(1000);
         intake(2500);
         sleep(500);
-        shooter.modVelocity(0);
+        shooter.stop();
 
         rotate(2500, 35);
 

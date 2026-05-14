@@ -25,7 +25,7 @@ public class PetitTriangleBleu extends BaseAutonomous {
         sleep(1500);
         intake(1000);
         sleep(500);
-        shooter.modVelocity(0);
+        shooter.stop();
 
         rotate(2500, 70);
 

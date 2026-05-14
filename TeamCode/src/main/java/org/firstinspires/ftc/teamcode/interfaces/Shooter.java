@@ -49,6 +49,10 @@ public class Shooter {
         shooter2.setVelocity(velocity);
     }
 
+    public void stop() {
+        modVelocity(0);
+    }
+
     public double[] getPower() {
         return new double[]{shooter1.getPower(), shooter2.getPower()};
     }
