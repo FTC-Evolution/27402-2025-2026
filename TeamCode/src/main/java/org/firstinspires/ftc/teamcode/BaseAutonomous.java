@@ -281,6 +281,8 @@ public class BaseAutonomous extends BaseOpMode {
         turnRunTime.reset();
 
         while (!turned || turnRunTime.milliseconds() < timeout_ms) {
+            telemetry.addData("Turn - Runtime",turnRunTime.seconds());
+            telemetry.addData("Turn - Timeout",timeout_ms);
             turned = rotateRobot(target_rotation);
         }
     }
