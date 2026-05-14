@@ -250,6 +250,12 @@ public class BaseOpMode extends LinearOpMode {
         if (gamepad2.startWasPressed()) {
             shooterPower += 0.5;
         }
+        if (gamepad1.backWasPressed()) {
+            led.Confetti();
+        }
+        if (gamepad1.startWasPressed()) {
+            led.TeamSpirit();
+        }
 
         if (shooter.inReadyRange(shooterTPS)) {
             led.setColour(Led.Colour.GREEN);
