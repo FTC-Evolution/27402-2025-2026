@@ -316,11 +316,11 @@ public class BaseTeleop extends BaseOpMode {
     public tung cameraLoop() {
         vision.updateGoalAprilTag(Vision.UpdateGoalAprilTagGoal.BOTH);
         if (gamepad1.b) {
-            alignAprilTag(50.0, Vision.UpdateGoalAprilTagGoal.BOTH);
+            alignAprilTag(45.0, Vision.UpdateGoalAprilTagGoal.BOTH,0);
         }
 
         if (gamepad1.y) {
-            alignAprilTag(100.0, Vision.UpdateGoalAprilTagGoal.BOTH);
+            alignAprilTag(115.0, Vision.UpdateGoalAprilTagGoal.BOTH,34.5);
         }
         return tung.SAHUR;
     }

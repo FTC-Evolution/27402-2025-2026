@@ -142,9 +142,9 @@ public class Vision {
         } else { return 0.0; }
     }
 
-    public double getFieldGoalYaw() {
+    public double getFieldGoalYaw(double offset) {
         if (currentGoal != null) {
-            return currentGoal.ftcPose.yaw;
+            return currentGoal.ftcPose.yaw - offset;
         } else { return 0.0; }
     }
 
@@ -172,7 +172,7 @@ public class Vision {
         return getFieldGoalBearing();
     }
 
-    public double getYawError() {
-        return getFieldGoalYaw();
+    public double getYawError(double offset) {
+        return getFieldGoalYaw(offset);
     }
 }

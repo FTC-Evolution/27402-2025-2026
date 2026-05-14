@@ -289,10 +289,10 @@ public class BaseOpMode extends LinearOpMode {
 
     }
 
-    public boolean alignAprilTag(double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect) {
+    public boolean alignAprilTag(double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect, double yaw_offset) {
         vision.updateGoalAprilTag(goalDetect);
 
-        double turn = yawPID.update(vision.getYawError());
+        double turn = yawPID.update(vision.getYawError(yaw_offset));
         double strafe = bearingPID.update(vision.getHeadingError()*2);
         double drive = rangePID.update(vision.getRangeError(target_distance));
 
@@ -305,7 +305,7 @@ public class BaseOpMode extends LinearOpMode {
         telemetry.addData("turn",turn);
 
         telemetry.addLine("-------------Error passed-----------");
-        telemetry.addData("yaw",vision.getYawError());
+        telemetry.addData("yaw",vision.getYawError(yaw_offset));
         telemetry.addData("heading",vision.getHeadingError()*2);
         telemetry.addData("range",vision.getRangeError(target_distance));
 

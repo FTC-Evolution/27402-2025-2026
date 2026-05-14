@@ -265,13 +265,13 @@ public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
-    public void alignFieldGoal(double timeout_ms, double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect) {
+    public void alignFieldGoal(double timeout_ms, double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect, double yaw_offset) {
         boolean aligned = false;
         ElapsedTime alignRunTime = new ElapsedTime();
         alignRunTime.reset();
 
         while (!aligned || alignRunTime.milliseconds() < timeout_ms) {
-            aligned = alignAprilTag(target_distance, goalDetect);
+            aligned = alignAprilTag(target_distance, goalDetect,yaw_offset);
         }
     }
 
