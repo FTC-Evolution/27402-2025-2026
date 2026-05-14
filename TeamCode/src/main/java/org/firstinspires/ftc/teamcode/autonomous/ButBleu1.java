@@ -21,9 +21,7 @@ public class ButBleu1 extends BaseAutonomous {
         shooter.fireUp(shooterTPS, led);
 
         sleep(1000);
-        goober.modPower(-1);
-        sleep(2500);
-        goober.modPower(0);
+        intake(2500);
         sleep(500);
         shooter.modVelocity(0);
 
