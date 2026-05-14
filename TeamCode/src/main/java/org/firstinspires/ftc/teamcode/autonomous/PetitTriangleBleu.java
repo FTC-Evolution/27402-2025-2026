@@ -27,11 +27,11 @@ public class PetitTriangleBleu extends BaseAutonomous {
         sleep(500);
         shooter.stop();
 
-        rotate(2500, 70);
+        drive(DRIVE_SPEED, 15, 15, 5.0);
 
         sleep(750);
 
-        drive(DRIVE_SPEED, 10, 10, 5.0);
+        rotate(2500, 70);
 
         led.TeamSpirit();
 
