@@ -18,6 +18,7 @@ public class Shooter {
 
     public static final double DEFAULT_SHOOTER_POWER = 32;
     public static final double DEFAULT_LONG_SHOOTER_POWER = 40;
+    public static final double DEFAULT_LONG_AUTONOMOUS_SHOOTER_POWER = DEFAULT_LONG_SHOOTER_POWER;
     public static final double DEFAULT_SIDE_SHOOTER_POWER = DEFAULT_SHOOTER_POWER - 1;
 
     public Shooter(DcMotorEx shooter1, DcMotorEx shooter2) {
