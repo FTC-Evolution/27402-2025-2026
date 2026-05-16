@@ -263,11 +263,16 @@ public class BaseOpMode extends LinearOpMode {
                     && shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]) {
             led.setColour(Led.Colour.RED);
             telemetry.addLine("Overshooting speed - Restart SHOOTER!");
-        } else if ((shooter.getVelocity()[0] > shooter.speed(shooterTPS) + 20
-                    && shooter.getVelocity()[1] > shooter.speed(shooterTPS) + 20) || (
-                shooter.getVelocity()[0] < shooter.speed(shooterTPS) - 40
-                        && shooter.getVelocity()[1] < shooter.speed(shooterTPS) - 40
-                )) {
+        } else if (
+            (shooter.getVelocity()[0] > shooter.speed(shooterTPS) + 20 &&
+                shooter.getVelocity()[1] > shooter.speed(shooterTPS) + 20) ||
+            ((shooter.getVelocity()[0] < shooter.speed(shooterTPS) - 40 &&
+                    shooter.getVelocity()[1] <
+                    shooter.speed(shooterTPS) - 40) &&
+                shooter.getVelocity()[0] != 0 &&
+                shooter.getVelocity()[1] != 0 &&
+                gamepad2.right_trigger != 0)
+        ) {
             led.TeamSpiritBlitz();
             telemetry.addLine("Go BALL!");
         }
