@@ -219,12 +219,6 @@ public class BaseOpMode extends LinearOpMode {
             led.setColour(Led.Colour.GREEN);
             telemetry.addLine("Shooters Are Ready. GET SHOOTING.");
         } else if (
-            shooter.getVelocity()[0] > shooter.readyRange(shooterTPS)[0] &&
-            shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]
-        ) {
-            led.setColour(Led.Colour.RED);
-            telemetry.addLine("Overshooting speed - Restart SHOOTER!");
-        } else if (
             (shooter.getVelocity()[0] > shooter.speed(shooterTPS) + 20 &&
                 shooter.getVelocity()[1] > shooter.speed(shooterTPS) + 20) ||
             ((shooter.getVelocity()[0] < shooter.speed(shooterTPS) - 40 &&
@@ -236,6 +230,12 @@ public class BaseOpMode extends LinearOpMode {
         ) {
             led.TeamSpiritBlitz();
             telemetry.addLine("Go BALL!");
+        } else if (
+            shooter.getVelocity()[0] > shooter.readyRange(shooterTPS)[0] &&
+            shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]
+        ) {
+            led.setColour(Led.Colour.RED);
+            telemetry.addLine("Overshooting speed - Restart SHOOTER!");
         } else {
             led.setColour(Led.Colour.WHITE);
             telemetry.addLine("Not Fast Enough. WAIT UP.");
