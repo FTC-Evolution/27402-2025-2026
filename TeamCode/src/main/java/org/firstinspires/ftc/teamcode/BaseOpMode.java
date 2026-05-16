@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.annotation.SuppressLint;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,7 +11,6 @@ import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -22,11 +20,11 @@ import org.firstinspires.ftc.teamcode.interfaces.Led;
 import org.firstinspires.ftc.teamcode.interfaces.Shooter;
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
 import org.firstinspires.ftc.teamcode.utility.SimplePID;
-
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 public class BaseOpMode extends LinearOpMode {
+
     protected final ElapsedTime runtime = new ElapsedTime();
 
     protected boolean showImuTelemetry = false;
@@ -57,14 +55,17 @@ public class BaseOpMode extends LinearOpMode {
     protected NormalizedColorSensor sensor;
 
     protected final double SHOOTER_TICKS_PER_REV = 28;
-    static final double     COUNTS_PER_MOTOR_REV    = 537.6;
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing.
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     WHEEL_DISTANCE_INCHES   = 12.25;
-    protected static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);
-    protected static final double     INCHES_PER_DEGREE       = (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
-    protected static final double     DRIVE_SPEED             = 0.6;
-    protected static final double     TURN_SPEED              = 0.5;
+    static final double COUNTS_PER_MOTOR_REV = 537.6;
+    static final double DRIVE_GEAR_REDUCTION = 1.0; // No External Gearing.
+    static final double WHEEL_DIAMETER_INCHES = 4.0; // For figuring circumference
+    static final double WHEEL_DISTANCE_INCHES = 12.25;
+    protected static final double COUNTS_PER_INCH =
+        (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+        (WHEEL_DIAMETER_INCHES * Math.PI);
+    protected static final double INCHES_PER_DEGREE =
+        (WHEEL_DISTANCE_INCHES * Math.PI) / 360;
+    protected static final double DRIVE_SPEED = 0.6;
+    protected static final double TURN_SPEED = 0.5;
 
     protected double shooterPower = Shooter.DEFAULT_SHOOTER_POWER; // Perfect speed to throw the ball when at the point of the launch triangle on the field
     protected double shooterTPS = shooterPower * SHOOTER_TICKS_PER_REV;
@@ -73,54 +74,20 @@ public class BaseOpMode extends LinearOpMode {
         return (degrees / 360) * INCHES_PER_DEGREE;
     }
 
-
     @Override
-    public void runOpMode(){
-
-    }
-
-
-
+    public void runOpMode() {}
 
     public void cameraInit() {
         vision = new Vision(hardwareMap.get(WebcamName.class, "Webcam 1"));
         showCameraTelemetry = true;
 
-        yawPID = new SimplePID(
-                0.03,
-                0,
-                0.002,
-                -0.3,
-                0.3,
-                0.1
-        );
+        yawPID = new SimplePID(0.03, 0, 0.002, -0.3, 0.3, 0.1);
 
-        bearingPID = new SimplePID(
-            0.025,
-                0.0,
-                0.001,
-                -2,
-                2,
-                0.1
-        );
+        bearingPID = new SimplePID(0.025, 0.0, 0.001, -2, 2, 0.1);
 
-        rangePID = new SimplePID(
-            0.04,
-                0.0,
-                0.002,
-                -0.5,
-                0.5,
-                2.0
-        );
+        rangePID = new SimplePID(0.04, 0.0, 0.002, -0.5, 0.5, 2.0);
 
-        robotOrientationPID = new SimplePID(
-                0.03,
-                0,
-                0.002,
-                -0.3,
-                0.3,
-                1.5
-        );
+        robotOrientationPID = new SimplePID(0.03, 0, 0.002, -0.3, 0.3, 1.5);
     }
 
     public void shooterLedInit() {
@@ -131,26 +98,21 @@ public class BaseOpMode extends LinearOpMode {
         showShooterTelemetry = true;
 
         shooter = new Shooter(
-                hardwareMap.get(DcMotorEx.class, "leftshooter"),
-                hardwareMap.get(DcMotorEx.class, "rightshooter")
+            hardwareMap.get(DcMotorEx.class, "leftshooter"),
+            hardwareMap.get(DcMotorEx.class, "rightshooter")
         );
-
-
     }
 
     public void imuInit() {
-        brain = new Brain(
-                hardwareMap.get(IMU.class, "imu")
-
-        );
+        brain = new Brain(hardwareMap.get(IMU.class, "imu"));
     }
 
-    public void gooberInit(){
+    public void gooberInit() {
         showGooberTelemetry = true;
 
         goober = new Goober(
-                hardwareMap.get(DcMotorEx.class, "goober"),
-                hardwareMap.get(DcMotorEx.class, "goober2")
+            hardwareMap.get(DcMotorEx.class, "goober"),
+            hardwareMap.get(DcMotorEx.class, "goober2")
         );
     }
 
@@ -165,8 +127,6 @@ public class BaseOpMode extends LinearOpMode {
         frontRightDrive = hardwareMap.dcMotor.get("frd");
         backRightDrive = hardwareMap.dcMotor.get("brd");
 
-
-
         // Initialize the drive system variables.
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -180,11 +140,9 @@ public class BaseOpMode extends LinearOpMode {
         autoDriveInitOverride();
     }
 
-    public void autoDriveInitOverride() {
+    public void autoDriveInitOverride() {}
 
-    }
-
-    public void telemetryInit(){
+    public void telemetryInit() {
         telemetry.addData("status", "initialized");
         telemetry.update();
     }
@@ -218,10 +176,11 @@ public class BaseOpMode extends LinearOpMode {
             shooterPower += 10;
         }*/
         if (gamepad2.yWasPressed()) {
-            if (shooterPower >=
-                    // 2147483647 // 32 bit integer limit :P
-                    45
-            )  {
+            if (
+                shooterPower >=
+                // 2147483647 // 32 bit integer limit :P
+                45
+            ) {
                 return;
             }
             shooterPower += 1;
@@ -259,8 +218,10 @@ public class BaseOpMode extends LinearOpMode {
         if (shooter.inReadyRange(shooterTPS)) {
             led.setColour(Led.Colour.GREEN);
             telemetry.addLine("Shooters Are Ready. GET SHOOTING.");
-        } else if (shooter.getVelocity()[0] > shooter.readyRange(shooterTPS)[0]
-                    && shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]) {
+        } else if (
+            shooter.getVelocity()[0] > shooter.readyRange(shooterTPS)[0] &&
+            shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]
+        ) {
             led.setColour(Led.Colour.RED);
             telemetry.addLine("Overshooting speed - Restart SHOOTER!");
         } else if (
@@ -275,16 +236,13 @@ public class BaseOpMode extends LinearOpMode {
         ) {
             led.TeamSpiritBlitz();
             telemetry.addLine("Go BALL!");
-        }
-        else {
+        } else {
             led.setColour(Led.Colour.WHITE);
             telemetry.addLine("Not Fast Enough. WAIT UP.");
         }
-
     }
 
     public void gooberLoop() {
-
         // Change to Gamepad 1, Gamepad 2 is for testing purposes
         if (gamepad2.left_bumper) {
             goober.modPower(1);
@@ -293,7 +251,7 @@ public class BaseOpMode extends LinearOpMode {
         } else if (gamepad2.dpad_left) {
             goober.modSoloPower(1, Goober.Type.TOP);
         } else if (gamepad2.dpad_right) {
-            goober.modSoloPower(-1,Goober.Type.TOP);
+            goober.modSoloPower(-1, Goober.Type.TOP);
         } else if (gamepad2.dpad_up) {
             goober.modSoloPower(1, Goober.Type.BOTTOM);
         } else if (gamepad2.dpad_down) {
@@ -301,36 +259,37 @@ public class BaseOpMode extends LinearOpMode {
         } else {
             goober.modPower(0);
         }
-
     }
 
     /*public void autoDriveFunction(boolean crabe, double speed, double leftInches, double rightInches, double timeout) {
 
     }*/
 
-    public void autoTelemetryLoop() {
+    public void autoTelemetryLoop() {}
 
-    }
-
-    public boolean alignAprilTag(double target_distance, Vision.UpdateGoalAprilTagGoal goalDetect, double yaw_offset) {
+    public boolean alignAprilTag(
+        double target_distance,
+        Vision.UpdateGoalAprilTagGoal goalDetect,
+        double yaw_offset
+    ) {
         vision.updateGoalAprilTag(goalDetect);
 
         double turn = yawPID.update(vision.getYawError(yaw_offset));
-        double strafe = bearingPID.update(vision.getHeadingError()*2);
+        double strafe = bearingPID.update(vision.getHeadingError() * 2);
         double drive = rangePID.update(vision.getRangeError(target_distance));
 
-        telemetry.addData("Target distance",target_distance);
+        telemetry.addData("Target distance", target_distance);
 
         telemetry.addLine("--------errorsrreturned--------");
 
         telemetry.addData("Drive", drive);
         telemetry.addData("strafe", strafe);
-        telemetry.addData("turn",turn);
+        telemetry.addData("turn", turn);
 
         telemetry.addLine("-------------Error passed-----------");
-        telemetry.addData("yaw",vision.getYawError(yaw_offset));
-        telemetry.addData("heading",vision.getHeadingError()*2);
-        telemetry.addData("range",vision.getRangeError(target_distance));
+        telemetry.addData("yaw", vision.getYawError(yaw_offset));
+        telemetry.addData("heading", vision.getHeadingError() * 2);
+        telemetry.addData("range", vision.getRangeError(target_distance));
 
         telemetry.update();
 
@@ -340,40 +299,54 @@ public class BaseOpMode extends LinearOpMode {
 
         if (Math.abs(turn) > 5) {
             strafe = 0;
-            drive  = 0;
+            drive = 0;
         }
 
-        moveRobot(drive,strafe, turn);
+        moveRobot(drive, strafe, turn);
 
         return turn == 0 && strafe == 0 && drive == 0;
     }
 
     public boolean rotateRobot(double target_rotation) {
-        double turn = robotOrientationPID.update(AngleUnit.normalizeDegrees(target_rotation-brain.getYaw(AngleUnit.DEGREES)));
+        double turn = robotOrientationPID.update(
+            AngleUnit.normalizeDegrees(
+                target_rotation - brain.getYaw(AngleUnit.DEGREES)
+            )
+        );
 
-        telemetry.addData("Target error passed to update", AngleUnit.normalizeDegrees(target_rotation-brain.getYaw(AngleUnit.DEGREES)));
+        telemetry.addData(
+            "Target error passed to update",
+            AngleUnit.normalizeDegrees(
+                target_rotation - brain.getYaw(AngleUnit.DEGREES)
+            )
+        );
         telemetry.addData("Current yaw", brain.getYaw(AngleUnit.DEGREES));
-        telemetry.addData("Target rotate",target_rotation);
+        telemetry.addData("Target rotate", target_rotation);
 
-        telemetry.addData("Returned rotation error (.error)",robotOrientationPID.error);
-        telemetry.addData("Current rotation error (.update return)",turn);
+        telemetry.addData(
+            "Returned rotation error (.error)",
+            robotOrientationPID.error
+        );
+        telemetry.addData("Current rotation error (.update return)", turn);
         telemetry.update();
 
-
-        moveRobot(0,0, turn);
+        moveRobot(0, 0, turn);
 
         return turn == 0;
     }
 
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
-        double frontLeftPower    =  x - y - yaw;
-        double frontRightPower   =  x + y + yaw;
-        double backLeftPower     =  x + y - yaw;
-        double backRightPower    =  x - y + yaw;
+        double frontLeftPower = x - y - yaw;
+        double frontRightPower = x + y + yaw;
+        double backLeftPower = x + y - yaw;
+        double backRightPower = x - y + yaw;
 
         // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        double max = Math.max(
+            Math.abs(frontLeftPower),
+            Math.abs(frontRightPower)
+        );
         max = Math.max(max, Math.abs(backLeftPower));
         max = Math.max(max, Math.abs(backRightPower));
 
@@ -392,8 +365,7 @@ public class BaseOpMode extends LinearOpMode {
     }
 
     @SuppressLint("DefaultLocale")
-    public void telemetryLoop(){
-
+    public void telemetryLoop() {
         telemetry.addData("status", "runtime: " + runtime);
         autoTelemetryLoop();
 
@@ -402,15 +374,44 @@ public class BaseOpMode extends LinearOpMode {
             AprilTagMetadata detectionMetadata = vision.getFieldGoalMetadata();
             AprilTagPoseFtc detectionPose = vision.getFieldGoalFtcPose();
             // Step through the list of detections and display info for each one.
-                if (detectionMetadata != null && detectionPose != null) {
-                    telemetry.addLine(String.format("\n==== (%d) %s", detectionMetadata.id, detectionMetadata));
-                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectionPose.x, detectionPose.y, detectionPose.z));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectionPose.pitch, detectionPose.roll, detectionPose.yaw));
-                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectionPose.range, detectionPose.bearing, detectionPose.elevation));
-                }
+            if (detectionMetadata != null && detectionPose != null) {
+                telemetry.addLine(
+                    String.format(
+                        "\n==== (%d) %s",
+                        detectionMetadata.id,
+                        detectionMetadata
+                    )
+                );
+                telemetry.addLine(
+                    String.format(
+                        "XYZ %6.1f %6.1f %6.1f  (inch)",
+                        detectionPose.x,
+                        detectionPose.y,
+                        detectionPose.z
+                    )
+                );
+                telemetry.addLine(
+                    String.format(
+                        "PRY %6.1f %6.1f %6.1f  (deg)",
+                        detectionPose.pitch,
+                        detectionPose.roll,
+                        detectionPose.yaw
+                    )
+                );
+                telemetry.addLine(
+                    String.format(
+                        "RBE %6.1f %6.1f %6.1f  (inch, deg, deg)",
+                        detectionPose.range,
+                        detectionPose.bearing,
+                        detectionPose.elevation
+                    )
+                );
+            }
 
             // Add "key" information to telemetry
-            telemetry.addLine("key:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            telemetry.addLine(
+                "key:\nXYZ = X (Right), Y (Forward), Z (Up) dist."
+            );
             telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
             telemetry.addLine("RBE = Range, Bearing & Elevation");
             telemetry.addData("Yaw error", yawPID.error);
@@ -428,10 +429,19 @@ public class BaseOpMode extends LinearOpMode {
         }
 
         if (showShooterTelemetry) {
-            telemetry.addData("left Shooter Velocity", shooter.getVelocity()[0]);
-            telemetry.addData("right Shooter Velocity", shooter.getVelocity()[1]);
+            telemetry.addData(
+                "left Shooter Velocity",
+                shooter.getVelocity()[0]
+            );
+            telemetry.addData(
+                "right Shooter Velocity",
+                shooter.getVelocity()[1]
+            );
             telemetry.addData("shooter Power variable", shooterPower);
-            telemetry.addData("shooter TPS (Supposed velocity)", shooterPower*SHOOTER_TICKS_PER_REV);
+            telemetry.addData(
+                "shooter TPS (Supposed velocity)",
+                shooterPower * SHOOTER_TICKS_PER_REV
+            );
         }
 
         if (showColorTelemetry) {
@@ -440,18 +450,35 @@ public class BaseOpMode extends LinearOpMode {
             String ballColor;
 
             telemetry.addData("Hue", JavaUtil.colorToHue(colorCode));
-            telemetry.addData("Saturation", "%.3f", JavaUtil.colorToSaturation(colorCode));
-            telemetry.addData("Value", "%.3f", JavaUtil.colorToValue(colorCode));
+            telemetry.addData(
+                "Saturation",
+                "%.3f",
+                JavaUtil.colorToSaturation(colorCode)
+            );
+            telemetry.addData(
+                "Value",
+                "%.3f",
+                JavaUtil.colorToValue(colorCode)
+            );
             telemetry.addData("Color", JavaUtil.colorToText(colorCode));
 
             telemetry.addData("Alpha", "%.3f", colors.alpha);
 
-            telemetry.addData("Light level", "%.3f", ((OpticalDistanceSensor) sensor).getLightDetected());
+            telemetry.addData(
+                "Light level",
+                "%.3f",
+                ((OpticalDistanceSensor) sensor).getLightDetected()
+            );
 
-            if ((JavaUtil.colorToHue(colorCode) >= 200) && (JavaUtil.colorToHue(colorCode) <= 300)) {
+            if (
+                (JavaUtil.colorToHue(colorCode) >= 200) &&
+                (JavaUtil.colorToHue(colorCode) <= 300)
+            ) {
                 ballColor = "purple";
-            }
-            else if ((JavaUtil.colorToHue(colorCode) >= 30) && (JavaUtil.colorToHue(colorCode) <= 199)) {
+            } else if (
+                (JavaUtil.colorToHue(colorCode) >= 30) &&
+                (JavaUtil.colorToHue(colorCode) <= 199)
+            ) {
                 ballColor = "green";
             } else {
                 ballColor = "unknown";
@@ -461,8 +488,14 @@ public class BaseOpMode extends LinearOpMode {
         }
 
         if (showGooberTelemetry) {
-            telemetry.addData("top Goober power", goober.getPower().get(Goober.Type.TOP));
-            telemetry.addData("bottom Goober power", goober.getPower().get(Goober.Type.BOTTOM));
+            telemetry.addData(
+                "top Goober power",
+                goober.getPower().get(Goober.Type.TOP)
+            );
+            telemetry.addData(
+                "bottom Goober power",
+                goober.getPower().get(Goober.Type.BOTTOM)
+            );
         }
 
         telemetry.update();
