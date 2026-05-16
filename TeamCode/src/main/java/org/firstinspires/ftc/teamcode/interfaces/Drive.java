@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class Drive {
+
     protected final DcMotor frontLeftDrive;
     protected final DcMotor backLeftDrive;
     protected final DcMotor frontRightDrive;
@@ -34,10 +35,12 @@ public class Drive {
     }
 
     public int[] getCurrentPosition() {
-        return new int[]{frontLeftDrive.getCurrentPosition(),
-                backLeftDrive.getCurrentPosition(),
-                frontRightDrive.getCurrentPosition(),
-                backRightDrive.getCurrentPosition()};
+        return new int[] {
+            frontLeftDrive.getCurrentPosition(),
+            backLeftDrive.getCurrentPosition(),
+            frontRightDrive.getCurrentPosition(),
+            backRightDrive.getCurrentPosition(),
+        };
     }
 
     public void setTargetPosition(int newLeftTarget, int newRightTarget) {
@@ -56,7 +59,7 @@ public class Drive {
         frontRightDrive.setTargetPosition(newRightTarget);
     }
 
-    public void setMode(DcMotor.RunMode mode){
+    public void setMode(DcMotor.RunMode mode) {
         backLeftDrive.setMode(mode);
         backRightDrive.setMode(mode);
         frontLeftDrive.setMode(mode);
@@ -70,11 +73,16 @@ public class Drive {
         frontRightDrive.setPower(power);
     }
 
-    public void setPowerGranular(double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower) {
-       frontLeftDrive.setPower(frontLeftPower);
-       backLeftDrive.setPower(backLeftPower);
-       frontRightDrive.setPower(frontRightPower);
-       backRightDrive.setPower(backRightPower);
+    public void setPowerGranular(
+        double frontLeftPower,
+        double backLeftPower,
+        double frontRightPower,
+        double backRightPower
+    ) {
+        frontLeftDrive.setPower(frontLeftPower);
+        backLeftDrive.setPower(backLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        backRightDrive.setPower(backRightPower);
     }
 
     public boolean isBusy() {
