@@ -13,14 +13,14 @@ public class PetitTriangleRouge extends BaseAutonomous {
 
         shooterTPS = shooter.speed(Shooter.DEFAULT_LONG_AUTONOMOUS_SHOOTER_POWER);
 
-        shooter.fireUp(shooterTPS, led);
+        shooter.fireUp(shooterTPS, led, telemetry);
 
         sleep(3000);
         intake(500);
-        shooter.fireUp(shooterTPS, led);
+        shooter.fireUp(shooterTPS, led, telemetry);
         sleep(1500);
         intake(700);
-        shooter.fireUp(shooterTPS, led);
+        shooter.fireUp(shooterTPS, led, telemetry);
         sleep(1500);
         intake(1000);
         sleep(500);

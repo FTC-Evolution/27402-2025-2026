@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Shooter {
     protected final DcMotorEx shooter1;
     protected final DcMotorEx shooter2;
@@ -83,17 +85,17 @@ public class Shooter {
         return shooter1NotEmpty && shooter1InRange && shooter2NotEmpty && shooter2InRange;
     }
 
-    public void fireUp(double shooterTPS, Led led) {
+    public void fireUp(double shooterTPS, Led led, Telemetry telemetry) {
         modVelocity(shooterTPS);
 
         while (!inReadyRange(shooterTPS)) {
             led.setColour(Led.Colour.WHITE);
-            // telemetry.addLine("Waiting for shooters to fire up");
-            // telemetry.update();
+            telemetry.addLine("Waiting for shooters to fire up");
+            telemetry.update();
         }
 
         led.setColour(Led.Colour.GREEN);
-        //telemetry.addLine("Shooters ready ... Shooting");
-        //telemetry.update();
+        telemetry.addLine("Shooters ready");
+        telemetry.update();
     }
 }

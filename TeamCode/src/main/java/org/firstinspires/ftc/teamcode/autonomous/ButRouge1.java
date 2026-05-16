@@ -18,7 +18,7 @@ public class ButRouge1 extends BaseAutonomous {
 
         shooterTPS = shooter.speed(Shooter.DEFAULT_SHOOTER_POWER);
 
-        shooter.fireUp(shooterTPS, led);
+        shooter.fireUp(shooterTPS, led, telemetry);
 
         sleep(1000);
         intake(2500);
