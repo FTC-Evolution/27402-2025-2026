@@ -52,7 +52,7 @@ public class BaseTeleop extends BaseOpMode {
 
 
 
-        // i add cool deadzones WOW
+        // I add cool dead zones WOW
         if (Math.abs(y) < DRIVE_STICK_DEADZONE) {
             y = 0;
         }
