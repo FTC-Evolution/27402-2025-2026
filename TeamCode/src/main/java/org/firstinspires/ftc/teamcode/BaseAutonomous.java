@@ -65,19 +65,11 @@ public class BaseAutonomous extends BaseOpMode {
 
     @Override
     public void autoDriveInitOverride() {
-        backLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.resetEncoders();
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Starting hat",  "%7d :%7d",
-                backLeftDrive.getCurrentPosition(),
-                backRightDrive.getCurrentPosition());
+                drive.getCurrentPosition()[1],
+                drive.getCurrentPosition()[3]);
         telemetry.update();
     }
 
@@ -91,31 +83,17 @@ public class BaseAutonomous extends BaseOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = drive.getCurrentPosition()[1] + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = drive.getCurrentPosition()[3] + (int)(rightInches * COUNTS_PER_INCH);
 
-            backLeftDrive.setTargetPosition(newLeftTarget);
-            frontLeftDrive.setTargetPosition(newLeftTarget);
-
-            backRightDrive.setTargetPosition(newRightTarget);
-            frontRightDrive.setTargetPosition(newRightTarget);
-
+            drive.setTargetPosition(newLeftTarget,newRightTarget);
             // Turn On RUN_TO_POSITION
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+            drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
             // reset the timeout time and start motion.
             runtime.reset();
-            backLeftDrive.setPower(Math.abs(speed));
-            backRightDrive.setPower(Math.abs(speed));
-            frontLeftDrive.setPower(Math.abs(speed));
-            frontRightDrive.setPower(Math.abs(speed));
-
-
+            drive.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -125,30 +103,20 @@ public class BaseAutonomous extends BaseOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (backLeftDrive.isBusy() && backRightDrive.isBusy())) {
+                    drive.isBusy()) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d",
-                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                        drive.getCurrentPosition()[1], drive.getCurrentPosition()[3]);
                 telemetry.update();
             }
 
             // Stop all motion;
-            backLeftDrive.setPower(0);
-            backRightDrive.setPower(0);
-            frontLeftDrive.setPower(0);
-            frontRightDrive.setPower(0);
-
-
+            drive.stop();
 
             // Turn off RUN_TO_POSITION
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
+            drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move.
         }
@@ -163,29 +131,19 @@ public class BaseAutonomous extends BaseOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = backLeftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = backRightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = drive.getCurrentPosition()[1] + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = drive.getCurrentPosition()[3] + (int)(rightInches * COUNTS_PER_INCH);
 
-            backRightDrive.setTargetPosition(newLeftTarget);
-            frontLeftDrive.setTargetPosition(newLeftTarget);
-
-            backLeftDrive.setTargetPosition(newRightTarget);
-            frontRightDrive.setTargetPosition(newRightTarget);
+            drive.setTargetPositionCrabe(newLeftTarget,newRightTarget);
 
             // Turn On RUN_TO_POSITION
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
 
             // reset the timeout time and start motion.
             runtime.reset();
-            backLeftDrive.setPower(Math.abs(speed));
-            backRightDrive.setPower(Math.abs(speed));
-            frontLeftDrive.setPower(Math.abs(speed));
-            frontRightDrive.setPower(Math.abs(speed));
+            drive.setPower(Math.abs(speed));
 
 
 
@@ -197,30 +155,20 @@ public class BaseAutonomous extends BaseOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (backLeftDrive.isBusy() && backRightDrive.isBusy() && frontRightDrive.isBusy() && frontLeftDrive.isBusy())) {
+                    drive.isBusy()) {
 
                 // Display it for the driver.
                 telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
                 telemetry.addData("Currently at",  " at %7d :%7d",
-                        backLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition());
+                        drive.getCurrentPosition()[1],drive.getCurrentPosition()[3]);
                 telemetry.update();
             }
 
             // Stop all motion;
-            backLeftDrive.setPower(0);
-            backRightDrive.setPower(0);
-            frontLeftDrive.setPower(0);
-            frontRightDrive.setPower(0);
-
-
+            drive.stop();
 
             // Turn off RUN_TO_POSITION
-            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
+            drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move.
         }

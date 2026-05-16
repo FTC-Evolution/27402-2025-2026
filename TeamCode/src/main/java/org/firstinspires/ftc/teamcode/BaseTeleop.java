@@ -81,10 +81,7 @@ public class BaseTeleop extends BaseOpMode {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
-        frontLeftDrive.setPower(frontLeftPower);
-        backLeftDrive.setPower(backLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backRightDrive.setPower(backRightPower);
+        drive.setPowerGranular(frontLeftPower,backLeftPower,frontRightPower,backRightPower);
     }
 
     public void fieldOrientationLoop() {

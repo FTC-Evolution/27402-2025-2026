@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.interfaces.Brain;
+import org.firstinspires.ftc.teamcode.interfaces.Drive;
 import org.firstinspires.ftc.teamcode.interfaces.Goober;
 import org.firstinspires.ftc.teamcode.interfaces.Led;
 import org.firstinspires.ftc.teamcode.interfaces.Shooter;
@@ -34,16 +35,13 @@ class BaseOpMode extends LinearOpMode {
     protected boolean showGooberTelemetry = false;
     protected boolean showCameraTelemetry = false;
 
-    protected DcMotor frontLeftDrive;
-    protected DcMotor frontRightDrive;
-    protected DcMotor backLeftDrive;
-    protected DcMotor backRightDrive;
-
     protected Goober goober;
 
     protected Shooter shooter;
 
     protected Vision vision;
+
+    protected Drive drive;
 
     SimplePID yawPID;
     SimplePID bearingPID;
@@ -76,7 +74,9 @@ class BaseOpMode extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() {}
+    public void runOpMode() {
+        waitForStart();
+    }
 
     public void cameraInit() {
         vision = new Vision(hardwareMap.get(WebcamName.class, "Webcam 1"));
@@ -121,20 +121,12 @@ class BaseOpMode extends LinearOpMode {
         // showImuTelemetry = true;
         // Declare our motors
         // Make sure your ID's match your configuration
-        frontLeftDrive = hardwareMap.dcMotor.get("fld");
-        backLeftDrive = hardwareMap.dcMotor.get("bld");
-        frontRightDrive = hardwareMap.dcMotor.get("frd");
-        backRightDrive = hardwareMap.dcMotor.get("brd");
-
-        // Initialize the drive system variables.
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        drive = new Drive(
+                hardwareMap.dcMotor.get("fld"),
+                hardwareMap.dcMotor.get("bld"),
+                hardwareMap.dcMotor.get("frd"),
+                hardwareMap.dcMotor.get("brd")
+        );
 
         autoDriveInitOverride();
     }
@@ -357,10 +349,7 @@ class BaseOpMode extends LinearOpMode {
         }
 
         // Send powers to the wheels.
-        frontLeftDrive.setPower(frontLeftPower);
-        frontRightDrive.setPower(frontRightPower);
-        backLeftDrive.setPower(backLeftPower);
-        backRightDrive.setPower(backRightPower);
+        drive.setPowerGranular(frontLeftPower,backLeftPower,frontRightPower,backRightPower);
     }
 
     @SuppressLint("DefaultLocale")
