@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
-@Autonomous(name="Base")
-@Disabled
+@Autonomous(name = "Base")
 public class BaseAutonomous extends BaseOpMode {
     protected double inchValue = 6.3;
     protected boolean LOOP_AUTONOMOUS = false;
