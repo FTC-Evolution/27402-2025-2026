@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
 
+@Autonomous(name="Base")
+@Disabled
 public class BaseAutonomous extends BaseOpMode {
     static final String[] possiblePaths = {"default", "avancer", "reculer","practice","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
     int currentPath = 0;
