@@ -192,8 +192,12 @@ public class BaseAutonomous extends BaseOpMode {
         ElapsedTime alignRunTime = new ElapsedTime();
         alignRunTime.reset();
 
-        while (!aligned || alignRunTime.milliseconds() < timeout_ms) {
-            aligned = alignAprilTag(target_distance, goalDetect,yaw_offset);
+        while (
+            !aligned &&
+            alignRunTime.milliseconds() < timeout_ms &&
+            opModeIsActive()
+        ) {
+            aligned = alignAprilTag(target_distance, goalDetect, yaw_offset);
         }
     }
 
@@ -202,9 +206,11 @@ public class BaseAutonomous extends BaseOpMode {
         ElapsedTime turnRunTime = new ElapsedTime();
         turnRunTime.reset();
 
-        while (!turned || turnRunTime.milliseconds() < timeout_ms) {
-            telemetry.addData("Turn - Runtime",turnRunTime.seconds());
-            telemetry.addData("Turn - Timeout",timeout_ms);
+        while (
+            !turned &&
+            turnRunTime.milliseconds() < timeout_ms &&
+            opModeIsActive()
+        ) {
             turned = rotateRobot(target_rotation);
         }
     }
