@@ -78,7 +78,12 @@ public class Drive {
     }
 
     public boolean isBusy() {
-        return backLeftDrive.isBusy() && backRightDrive.isBusy() && frontLeftDrive.isBusy() && frontRightDrive.isBusy();
+        return (
+            backLeftDrive.isBusy() ||
+            backRightDrive.isBusy() ||
+            frontLeftDrive.isBusy() ||
+            frontRightDrive.isBusy()
+        );
     }
 
     public void stop() {
