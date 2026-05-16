@@ -41,11 +41,6 @@ public class Shooter {
         this.shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void modPower(double power) {
-        shooter1.setPower(power);
-        shooter2.setPower(power);
-    }
-
     public void modVelocity(double velocity) {
         shooter1.setVelocity(velocity);
         shooter2.setVelocity(velocity);
@@ -53,10 +48,6 @@ public class Shooter {
 
     public void stop() {
         modVelocity(0);
-    }
-
-    public double[] getPower() {
-        return new double[]{shooter1.getPower(), shooter2.getPower()};
     }
 
     public double[] getVelocity() {
