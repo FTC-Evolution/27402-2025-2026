@@ -15,7 +15,6 @@ public class BaseTeleop extends BaseOpMode {
 
     double DRIVE_STICK_DEADZONE = 0.1;
 
-    // TODO auto align to april Tag
     String winner = "none";
 
     @Override

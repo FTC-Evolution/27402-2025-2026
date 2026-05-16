@@ -117,8 +117,6 @@ class BaseOpMode extends LinearOpMode {
         );
     }
 
-    // TODO Finish BaseOpMode Refactor
-
     public void driveInit() {
         // showImuTelemetry = true;
         // Declare our motors
