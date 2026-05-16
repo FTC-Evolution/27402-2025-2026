@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.interfaces.Vision;
@@ -12,13 +10,8 @@ import org.firstinspires.ftc.teamcode.interfaces.Vision;
 @Autonomous(name="Base")
 @Disabled
 public class BaseAutonomous extends BaseOpMode {
-    static final String[] possiblePaths = {"default", "avancer", "reculer","practice","crabeLEFT", "crabeRIGHT", "tournerCLOCK", "tournerCOUNTER","one","short","testCombo","richel"};
-    int currentPath = 0;
     protected double inchValue = 6.3;
-
     protected boolean LOOP_AUTONOMOUS = false;
-
-
     public void Init() {
 
     }
@@ -69,33 +62,6 @@ public class BaseAutonomous extends BaseOpMode {
 
         sleep(1000);
     }
-
-    /*@Override
-    public void aprilTagLoop(){
-        for (AprilTagDetection detection : vision.getDetections()) {
-            if (detection.metadata != null) {
-                if (detection.metadata.name.contains("Obelisk")) {
-                    obelisk = obeliskPositions.get(detection.id);
-                } else {
-                    fieldSide = fieldSidePositions.get(detection.id);
-
-                    // [TODO] Try figuring this out with detection.ftcPose.x and the crabeBoucleDrive() function like Thierry said
-
-                    double fieldSideYaw = -detection.ftcPose.yaw;
-                    final double tolerance = 2;
-                    double fieldSideDistance = detection.ftcPose.x - 70.5;
-                    if (Math.abs(fieldSideYaw) > tolerance) {
-                        drive(TURN_SPEED, degreesToInches(fieldSideYaw), degreesToInches(-fieldSideYaw), 5.0);
-                    }
-
-
-                }
-
-            }
-
-            drive(DRIVE_SPEED, -1000, -1000, 1000.0);
-        }
-    }*/
 
     @Override
     public void autoDriveInitOverride() {
@@ -262,8 +228,6 @@ public class BaseAutonomous extends BaseOpMode {
     @Override
     public void autoTelemetryLoop() {
         telemetry.addData("status", "runtime: " + runtime);
-        telemetry.addData("current path id", currentPath);
-        telemetry.addData("current path", possiblePaths[currentPath]);
         telemetry.addData("inches", inchValue);
 
         telemetry.update();
