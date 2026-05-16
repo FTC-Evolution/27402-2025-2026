@@ -199,6 +199,10 @@ public class BaseAutonomous extends BaseOpMode {
         ) {
             aligned = alignAprilTag(target_distance, goalDetect, yaw_offset);
         }
+
+        telemetry.addData("Align", aligned ? "SUCCESS" : "TIMEOUT");
+        telemetry.addData("took", alignRunTime.seconds());
+        telemetry.update();
     }
 
     public void rotate(double timeout_ms, double target_rotation) {
@@ -213,5 +217,9 @@ public class BaseAutonomous extends BaseOpMode {
         ) {
             turned = rotateRobot(target_rotation);
         }
+
+        telemetry.addData("Turn", turned ? "SUCCESS" : "TIMEOUT");
+        telemetry.addLine("took %7d s", turnRunTime.seconds());
+        telemetry.update();
     }
 }
