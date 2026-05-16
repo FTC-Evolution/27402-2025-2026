@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.annotation.SuppressLint;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -23,7 +25,7 @@ import org.firstinspires.ftc.teamcode.utility.SimplePID;
 import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
-public class BaseOpMode extends LinearOpMode {
+class BaseOpMode extends LinearOpMode {
 
     protected final ElapsedTime runtime = new ElapsedTime();
 
