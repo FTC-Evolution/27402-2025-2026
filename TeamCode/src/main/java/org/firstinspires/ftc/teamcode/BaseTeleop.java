@@ -48,30 +48,6 @@ public class BaseTeleop extends BaseOpMode {
 
     }
 
-    /*@Override
-    public void aprilTagLoop() {
-        for (AprilTagDetection detection : vision.getDetections()) {
-            if (detection.metadata != null) {
-                if (detection.metadata.name.contains("Obelisk")) {
-                    obelisk = obeliskPositions.get(detection.id);
-                } else {
-                    fieldSide = fieldSidePositions.get(detection.id);
-
-                    if (gamepad1.leftBumperWasPressed()) {
-                        if (Math.abs(detection.ftcPose.x) > Vision.APRILTAG_TOLERANCE_SIDE) ;
-                        {
-                            autoDriveCrabe(DRIVE_SPEED, detection.ftcPose.x, -detection.ftcPose.x, 5.0);
-                        }
-                    }
-
-                }
-
-
-            }
-
-        }
-    }*/
-
     public void driveLoop() {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x;
