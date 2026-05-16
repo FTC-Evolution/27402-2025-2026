@@ -109,7 +109,7 @@ class BaseOpMode extends LinearOpMode {
     }
 
     public void gooberInit() {
-        showGooberTelemetry = true;
+        // showGooberTelemetry = true;
 
         goober = new Goober(
             hardwareMap.get(DcMotorEx.class, "goober"),
@@ -120,7 +120,7 @@ class BaseOpMode extends LinearOpMode {
     // TODO Finish BaseOpMode Refactor
 
     public void driveInit() {
-        showImuTelemetry = true;
+        // showImuTelemetry = true;
         // Declare our motors
         // Make sure your ID's match your configuration
         frontLeftDrive = hardwareMap.dcMotor.get("fld");
