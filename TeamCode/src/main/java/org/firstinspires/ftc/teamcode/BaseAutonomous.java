@@ -235,7 +235,7 @@ public class BaseAutonomous extends BaseOpMode {
         }
 
         telemetry.addData("Align", aligned ? "SUCCESS" : "TIMEOUT");
-        telemetry.addData("took", alignRunTime.seconds());
+        telemetry.addData("time", alignRunTime.seconds());
         telemetry.update();
     }
 
@@ -253,7 +253,7 @@ public class BaseAutonomous extends BaseOpMode {
         }
 
         telemetry.addData("Turn", turned ? "SUCCESS" : "TIMEOUT");
-        telemetry.addLine("took %7d s", turnRunTime.seconds());
+        telemetry.addData("time", turnRunTime.seconds());
         telemetry.update();
     }
 }
