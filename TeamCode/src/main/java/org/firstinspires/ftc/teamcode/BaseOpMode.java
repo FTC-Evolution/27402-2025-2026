@@ -305,6 +305,9 @@ class BaseOpMode extends LinearOpMode {
         if (Math.abs(yawError) > 5) {
             strafe = 0;
             drive = 0;
+        } else {
+            strafe = bearingPID.update(headingError);
+            drive = rangePID.update(rangeError);
         }
 
         moveRobot(drive, strafe, turn);
