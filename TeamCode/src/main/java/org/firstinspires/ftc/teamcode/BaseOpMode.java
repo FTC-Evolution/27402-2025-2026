@@ -420,6 +420,7 @@ class BaseOpMode extends LinearOpMode {
             telemetry.addLine("RBE = Range, Bearing & Elevation");
             telemetry.addData("Yaw error", yawPID.error);
             telemetry.addData("Strafe error", bearingPID.error);
+            telemetry.addData("Range error", rangePID.error);
 
             telemetry.addData("Last seen Pattern", vision.obeliskName);
             telemetry.addData("Last seen Target", vision.fieldGoalName);
