@@ -85,7 +85,7 @@ public class Vision {
         return aprilTagProcessor.getDetections();
     }
 
-    public static enum UpdateGoalAprilTagGoal {
+    public enum UpdateGoalAprilTagGoal {
         BOTH,
         RED,
         BLUE
@@ -106,7 +106,7 @@ public class Vision {
                     case BOTH:
                         detectionCondition = detection.id == 20 || detection.id == 24;
                         break;
-                };
+                }
 
 
                 if (detectionCondition) { // GOAL april ids
@@ -128,12 +128,6 @@ public class Vision {
 
     public double absoluteFieldGoalDistance() {
         return Math.abs(getFieldGoalDistance());
-    }
-
-    public double getFieldGoalSideDistance() {
-        if (currentGoal != null) {
-            return currentGoal.ftcPose.x;
-        } else { return 0.0; }
     }
 
     public double getFieldGoalBearing() {
