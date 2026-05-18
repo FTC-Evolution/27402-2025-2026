@@ -29,10 +29,6 @@ public class Vision {
     public static final double        CAMERA_PITCH           = -80;
     public static final double        CAMERA_ROLL            = 0;
 
-    public static final double     APRILTAG_TOLERANCE_DISTANCE = 3;
-    public static final double     APRILTAG_TOLERANCE_ANGLE= 5;
-    public static final double     APRILTAG_TOLERANCE_SIDE = 8;
-
     public String obeliskName;
     public String fieldGoalName;
 
