@@ -265,8 +265,7 @@ class BaseOpMode extends LinearOpMode {
         vision.updateGoalAprilTag(goalDetect);
 
         if (vision.getDetections() == null || vision.getDetections().isEmpty()) {
-            telemetry.addLine("cant see apriltag");
-            telemetry.update();
+            telemetry.addLine("CANT SEE APRIL");
             moveRobot(0,0,0); //stop
             return false;
         }
