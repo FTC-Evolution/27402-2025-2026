@@ -226,11 +226,11 @@ public class BaseAutonomous extends BaseOpMode {
         ElapsedTime alignRunTime = new ElapsedTime();
         alignRunTime.reset();
 
-        while (
-            !aligned &&
-            alignRunTime.milliseconds() < timeout_ms &&
-            opModeIsActive()
-        ) {
+        telemetry.addData("Aligned", aligned);
+        telemetry.addData("RunTime", alignRunTime.seconds());
+        telemetry.addData("OpModeActive?", opModeIsActive());
+
+        while (!aligned && alignRunTime.milliseconds() < timeout_ms && opModeIsActive()) {
             aligned = alignAprilTag(target_distance, goalDetect, yaw_offset);
         }
 
