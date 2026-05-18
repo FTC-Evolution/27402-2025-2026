@@ -296,7 +296,7 @@ class BaseOpMode extends LinearOpMode {
         telemetry.addData("heading", headingError);
         telemetry.addData("range", rangeError);
 
-        telemetry.update();
+        // telemetry.update();
 
         /* drive = vision.getRangeError(target_distance);
         strafe = vision.getHeadingError();
