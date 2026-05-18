@@ -263,11 +263,27 @@ class BaseOpMode extends LinearOpMode {
     ) {
         vision.updateGoalAprilTag(goalDetect);
 
-        double turn = yawPID.update(vision.getYawError(yaw_offset));
-        double strafe = bearingPID.update(vision.getHeadingError() * 2);
-        double drive = rangePID.update(vision.getRangeError(target_distance));
+        if (vision.getDetections() == null || vision.getDetections().isEmpty()) {
+            telemetry.addLine("cant see apriltag");
+            telemetry.update();
+            moveRobot(0,0,0); //stop
+            return false;
+        }
+
+        double yawError = vision.getYawError(yaw_offset);
+        double headingError = vision.getHeadingError();
+        double rangeError = vision.getRangeError(target_distance);
+
+        double turn = yawPID.update(yawError);
+        double strafe = bearingPID.update(headingError);
+        double drive = rangePID.update(rangeError);
 
         telemetry.addData("Target distance", target_distance);
+
+        for (AprilTagDetection tag : vision.getDetections()) {
+            telemetry.addData("Visible tag",tag.id);
+        }
+
 
         telemetry.addLine("--------errorsrreturned--------");
 
@@ -276,9 +292,9 @@ class BaseOpMode extends LinearOpMode {
         telemetry.addData("turn", turn);
 
         telemetry.addLine("-------------Error passed-----------");
-        telemetry.addData("yaw", vision.getYawError(yaw_offset));
-        telemetry.addData("heading", vision.getHeadingError() * 2);
-        telemetry.addData("range", vision.getRangeError(target_distance));
+        telemetry.addData("yaw", yawError);
+        telemetry.addData("heading", headingError);
+        telemetry.addData("range", rangeError);
 
         telemetry.update();
 
@@ -286,14 +302,15 @@ class BaseOpMode extends LinearOpMode {
         strafe = vision.getHeadingError();
         turn = vision.getYawError(); */
 
-        if (Math.abs(turn) > 5) {
+        if (Math.abs(vision.getYawError(yaw_offset)) > 5) {
             strafe = 0;
             drive = 0;
         }
 
         moveRobot(drive, strafe, turn);
 
-        return turn == 0 && strafe == 0 && drive == 0;
+
+        return Math.abs(vision.getYawError(yaw_offset)) < 0.1 && Math.abs(vision.getHeadingError()) < 0.2 && Math.abs(vision.getRangeError(target_distance)) < 1;
     }
 
     public boolean rotateRobot(double target_rotation) {
