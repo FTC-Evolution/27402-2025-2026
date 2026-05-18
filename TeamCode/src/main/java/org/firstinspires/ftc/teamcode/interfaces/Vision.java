@@ -21,7 +21,7 @@ public class Vision {
     public static final int        CAMERA_RES_WIDTH       = 640;
     public static final int        CAMERA_RES_HEIGHT      = 480;
 
-    public static final double        CAMERA_X               = 10;
+    public static final double        CAMERA_X               = 3;
     public static final double        CAMERA_Y               = 0;
     public static final double        CAMERA_Z               = 0;
 
