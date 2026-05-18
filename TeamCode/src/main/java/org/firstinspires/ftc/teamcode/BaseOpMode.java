@@ -207,7 +207,7 @@ class BaseOpMode extends LinearOpMode {
         if (shooter.inReadyRange(shooterTPS)) {
             led.setColour(Led.Colour.GREEN);
             telemetry.addLine("Shooters Are Ready. GET SHOOTING.");
-        } else if (
+        }/* else if (
             (shooter.getVelocity()[0] > shooter.speed(shooterTPS) + 20 &&
                 shooter.getVelocity()[1] > shooter.speed(shooterTPS) + 20) ||
             ((shooter.getVelocity()[0] < shooter.speed(shooterTPS) - 40 &&
