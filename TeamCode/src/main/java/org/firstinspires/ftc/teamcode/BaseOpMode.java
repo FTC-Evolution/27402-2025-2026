@@ -220,7 +220,7 @@ class BaseOpMode extends LinearOpMode {
         ) {
             led.TeamSpiritBlitz();
             telemetry.addLine("Go BALL!");
-        } else if (
+        } */else if (
             shooter.getVelocity()[0] > shooter.readyRange(shooterTPS)[0] &&
             shooter.getVelocity()[1] > shooter.readyRange(shooterTPS)[1]
         ) {
