@@ -3,9 +3,14 @@ package org.firstinspires.ftc.teamcode.interfaces;
 import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Led {
     private final Servo led;
+
+    private final ElapsedTime confettiTimer = new ElapsedTime();
+    private int currentColourIndex = 0;
+    private boolean isConfettiRunning = false;
 
     public static class Colour {
         public static final double RED        = 0.28;
@@ -24,27 +29,36 @@ public class Led {
         this.led = led;
     }
 
-        public void Confetti() {
-            setColour(Colour.RED);
-            sleep(50);
-            setColour(Colour.ORANGE);
-            sleep(50);
-            setColour(Colour.YELLOW);
-            sleep(50);
-            setColour(Colour.SAGE);
-            sleep(50);
-            setColour(Colour.GREEN);
-            sleep(50);
-            setColour(Colour.AZURE);
-            sleep(50);
-            setColour(Colour.BLUE);
-            sleep(50);
-            setColour(Colour.INDIGO);
-            sleep(50);
-            setColour(Colour.VIOLET);
-            sleep(50);
-            setColour(Colour.WHITE);
+    private final double[] confettiColours = {
+            Colour.RED, Colour.ORANGE, Colour.YELLOW, Colour.SAGE,
+            Colour.GREEN, Colour.AZURE, Colour.BLUE, Colour.INDIGO,
+            Colour.VIOLET, Colour.WHITE
+    };
+
+    public void startConfetti() {
+        if (!isConfettiRunning) {
+            isConfettiRunning = true;
+            currentColourIndex = 0;
+            confettiTimer.reset();
+            setColour(confettiColours[currentColourIndex]);
         }
+    }
+
+    public void updateConfetti(double wait_ms) {
+        if (!isConfettiRunning) return;
+
+        if (confettiTimer.milliseconds() >= wait_ms) {
+            currentColourIndex++;
+
+            if (currentColourIndex >= confettiColours.length) {
+                isConfettiRunning = false;
+                setColour(Colour.WHITE);
+            } else {
+                setColour(confettiColours[currentColourIndex]);
+                confettiTimer.reset();
+            }
+        }
+    }
         public void TeamSpirit() {
             setColour(Colour.ORANGE);
             sleep(100);

@@ -41,6 +41,8 @@ public class BaseTeleop extends BaseOpMode {
             // colorSensorLoop();
             fieldOrientationLoop();
             telemetryLoop();
+
+            led.updateConfetti(30);
         }
 
     }

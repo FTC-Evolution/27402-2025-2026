@@ -199,7 +199,7 @@ class BaseOpMode extends LinearOpMode {
             shooterPower += 0.5;
         }
         if (gamepad1.backWasPressed()) {
-            led.Confetti();
+            led.startConfetti();
         }
         if (gamepad1.startWasPressed()) {
             led.TeamSpirit();
