@@ -214,7 +214,7 @@ public class BaseAutonomous extends BaseOpMode {
         goober.modPower(-1);
         sleep(time_ms);
         goober.modPower(0);
-    }\
+    }
 
     public void alignFieldGoal(
         double timeout_ms,
