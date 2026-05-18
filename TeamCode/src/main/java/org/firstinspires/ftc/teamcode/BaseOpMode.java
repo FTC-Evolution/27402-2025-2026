@@ -275,8 +275,8 @@ class BaseOpMode extends LinearOpMode {
         double rangeError = vision.getRangeError(target_distance);
 
         double turn = yawPID.update(yawError);
-        double strafe = bearingPID.update(headingError);
-        double drive = rangePID.update(rangeError);
+        double strafe = 0;
+        double drive = 0;
 
         telemetry.addData("Target distance", target_distance);
 
