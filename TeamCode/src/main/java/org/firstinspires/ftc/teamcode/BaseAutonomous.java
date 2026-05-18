@@ -214,7 +214,7 @@ public class BaseAutonomous extends BaseOpMode {
         goober.modPower(-1);
         sleep(time_ms);
         goober.modPower(0);
-    }
+    }\
 
     public void alignFieldGoal(
         double timeout_ms,
@@ -233,6 +233,8 @@ public class BaseAutonomous extends BaseOpMode {
         while (!aligned && alignRunTime.milliseconds() < timeout_ms && opModeIsActive()) {
             aligned = alignAprilTag(target_distance, goalDetect, yaw_offset);
         }
+
+        moveRobot(0,0,0);
 
         telemetry.addData("Align", aligned ? "SUCCESS" : "TIMEOUT");
         telemetry.addData("time", alignRunTime.seconds());
