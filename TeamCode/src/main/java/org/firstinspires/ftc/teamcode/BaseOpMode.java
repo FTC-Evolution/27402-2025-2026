@@ -302,7 +302,7 @@ class BaseOpMode extends LinearOpMode {
         strafe = vision.getHeadingError();
         turn = vision.getYawError(); */
 
-        if (Math.abs(vision.getYawError(yaw_offset)) > 5) {
+        if (Math.abs(yawError) > 5) {
             strafe = 0;
             drive = 0;
         }
