@@ -19,15 +19,15 @@
 ---
 
 ## Overview
-The FTC TeamCode for team 27402 is the code that controls our robot. It contains all Teleops and Autonomous modes.
+The FTC TeamCode for team 27402 is the code that controls our robot. It contains all Teleop and Autonomous modes. It is class defined, versatile, and modular.
 
 ### Key Features
 
-- ❓ **Hmm..** - That's a great question
-- 📈 **MeepMeep** - the MeepMeep robot simulation tool, is already built-in with the Decode field
+- 🔋 **Batteries included** - Support for LEDs, Driver hubs and multiple motors 
+- 📈 **MeepMeep Support** - The MeepMeep robot simulation tool, is already built-in with the Decode field
 - 🤖 **Autonomous** - Autonomous modes built in into classes, the classes are already separated by default
 - 👽 **Ergonomic** - Teleop mode that is easy to understand and use
-- 🤡 **NOT Modular** - This is **NOT** modular yet!
+- ⚙ **Modular** - There is a very modular structure of classes and integrations 
 
 ## Dependencies
 
